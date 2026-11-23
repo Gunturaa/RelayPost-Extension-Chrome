@@ -1,0 +1,10 @@
+{
+  "postSelector": "div[role='feed'] > div > div",
+  "contentSelectors": [
+    "div[data-ad-preview='message']",
+    "div[dir='auto']",
+    "div[data-visualcompletion='ignore-dynamic']"
+  ],
+  "composerSelector": "div[role='textbox'][contenteditable='true']",
+  "postButtonSelector": "div[aria-label='Post']"
+}

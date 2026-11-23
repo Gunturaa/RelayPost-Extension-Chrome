@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RelayPost</title>
+  <link rel="icon" type="image/png" href="../assets/icons/icon-32.png" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <!-- Top Brand Header -->
+    <header class="header">
+      <div class="brand-block">
+        <img src="../assets/icons/logo.svg" alt="RelayPost" width="28" height="28" class="brand-logo" />
+        <div class="brand-text">
+          <span class="brand-title">RelayPost</span>
+          <span class="brand-sub" id="appSubtitleLabel">Auto-Post Grup Facebook</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="plan-pill" id="licenseBtn" title="Status Paket &amp; Lisensi Pro">Free</button>
+        <button type="button" class="lang-btn" id="langToggleBtn" title="Ganti Bahasa (ID / EN)" aria-label="Switch language">ID</button>
+        <button type="button" class="icon-btn" id="themeBtn" aria-label="Ganti tema terang atau gelap" title="Tema">
+          <span data-icon="moon" data-icon-size="16" id="themeBtnIcon"></span>
+        </button>
+        <button type="button" class="icon-btn" id="workspaceBtn" aria-label="Buka layar penuh" title="Perbesar layar">
+          <span data-icon="workspace" data-icon-size="16"></span>
+        </button>
+        <button type="button" class="icon-btn" id="settingsBtn" aria-label="Setelan" title="Setelan">
+          <span data-icon="settings" data-icon-size="16"></span>
+        </button>
+        <button type="button" class="icon-btn" id="helpBtn" aria-label="Bantuan dan panduan" title="Bantuan">
+          <span data-icon="help" data-icon-size="16"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Account Connection Strip -->
+    <div class="account-strip">
+      <button type="button" class="actor-btn" id="actorDropdownBtn" aria-expanded="false" aria-haspopup="true">
+        <span class="actor-avatar" id="actorAvatar">?</span>
+        <span class="actor-info">
+          <span class="actor-name" id="actorName">Memeriksa Facebook...</span>
+          <span class="actor-sub" id="actorSub">Status akun</span>
+        </span>
+        <span class="actor-switch-pill" id="switchAccountLabel">Ganti</span>
+        <span data-icon="chevronDown" data-icon-size="14"></span>
+      </button>
+
+      <div class="actor-menu" id="actorMenu" hidden role="menu">
+        <div class="actor-menu-head">
+          <span id="lblPostingAs">Kirim sebagai</span>
+          <button type="button" class="btn-mini" id="refreshActorBtn">
+            <span data-icon="sync" data-icon-size="13"></span>
+            <span id="lblRefresh">Segarkan</span>
+          </button>
+        </div>
+        <div id="actorList" class="actor-list"></div>
+        <div class="actor-menu-foot">
+          <button type="button" class="btn-outline btn-sm btn-full" id="loadPagesBtn">Cari Halaman (Page) Saya</button>
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener" class="btn-link btn-sm" id="openFbLink">Buka Facebook</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Banners -->
+    <div class="banner banner-warn" id="fbSignedOutBanner" hidden role="status">
+      <div class="banner-text">
+        <strong id="fbNeedTitle">Facebook belum login.</strong>
+        <span id="fbNeedBody">Masuk ke facebook.com di Chrome agar RelayPost bisa mengambil grup.</span>
+      </div>
+      <a href="https://www.facebook.com/" target="_blank" rel="noopener" class="btn-sm btn-solid-warn" id="fbNeedCta">Buka Facebook</a>
+    </div>
+
+    <div class="banner banner-accent" id="missedBanner" hidden role="status">
+      <div class="banner-text" id="missedBannerText">Ada jadwal terlewat.</div>
+      <div class="banner-btns">
+        <button type="button" class="btn-mini" id="missedOpenQueueBtn">Lihat Jadwal</button>
+        <button type="button" class="btn-mini" id="missedDismissBtn">Tutup</button>
+      </div>
+    </div>
+
+    <!-- Primary Labeled Tabs (3 clear tabs) -->
+    <nav class="tabbar" role="tablist" aria-label="Menu utama" id="mainTabBar">
+      <button type="button" role="tab" id="tabCreateBtn" class="tab-btn is-active" aria-selected="true" aria-controls="panelCreate" tabindex="0">
+        <span data-icon="compose" data-icon-size="15"></span>
+        <span id="tabComposeLabel">Buat Post</span>
+      </button>
+      <button type="button" role="tab" id="tabQueueBtn" class="tab-btn" aria-selected="false" aria-controls="panelQueue" tabindex="-1">
+        <span data-icon="queue" data-icon-size="15"></span>
+        <span id="tabQueueLabel">Jadwal</span>
+        <span class="tab-badge" id="queueCountBadge" hidden>0</span>
+      </button>
+      <button type="button" role="tab" id="historyBtn" class="tab-btn" aria-selected="false" aria-controls="panelHistory" tabindex="-1">
+        <span data-icon="history" data-icon-size="15"></span>
+        <span id="tabHistoryLabel">Riwayat</span>
+      </button>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="main-area" id="mainArea">
+      <!-- Tab 1: Guided 3-Step Compose -->
+      <section role="tabpanel" id="panelCreate" aria-labelledby="tabCreateBtn" class="tab-panel">
+        <div class="compose-grid">
+          <div class="compose-column">
+
+            <!-- First-Time Orientation Card (dismissible) -->
+            <div class="intro-card" id="introCard">
+              <div class="intro-head">
+                <strong id="introTitle">Kirim 1 postingan ke banyak grup Facebook sekaligus</strong>
+                <button type="button" class="intro-dismiss" id="dismissIntroBtn">Paham, tutup</button>
+              </div>
+              <p class="intro-steps" id="introSteps">1. Pilih grup tujuan  &gt;  2. Tulis pesan / foto  &gt;  3. Klik Kirim Sekarang</p>
+            </div>
+
+            <!-- STEP 1: Target Groups -->
+            <div class="card step-card">
+              <div class="step-head">
+                <span class="step-dot" id="step1Dot">1</span>
+                <div class="step-head-text">
+                  <h2 class="step-title" id="step1Title">Pilih Grup Tujuan</h2>
+                  <p class="step-hint" id="step1Hint">Tentukan grup Facebook mana saja yang ingin dikirimi postingan.</p>
+                </div>
+                <span class="step-badge" id="selectedGroupsBadge">0</span>
+              </div>
+
+              <div class="step-actions-row">
+                <button type="button" class="btn-outline btn-sm btn-emphasis" id="openGroupsModalBtn">
+                  <span data-icon="groups" data-icon-size="15"></span>
+                  <span id="selectedGroupsSummary">Pilih Grup</span>
+                </button>
+                <button type="button" class="btn-outline btn-sm" id="openListsModalBtn">Daftar Tersimpan</button>
+              </div>
+
+              <p class="helper-note" id="noGroupsHelper">
+                Belum ada grup dipilih. Klik "Pilih Grup" untuk scan otomatis dari Facebook atau unggah CSV.
+              </p>
+              <div id="selectedChipsWrap" class="chips-wrap" hidden></div>
+            </div>
+
+            <!-- STEP 2: Write Post -->
+            <div class="card step-card">
+              <div class="step-head">
+                <span class="step-dot" id="step2Dot">2</span>
+                <div class="step-head-text">
+                  <h2 class="step-title" id="step2Title">Tulis Isi Postingan</h2>
+                  <p class="step-hint" id="step2Hint">Tulis pesan sekali, lalu tambahkan foto atau video bila perlu.</p>
+                </div>
+              </div>
+
+              <div class="editor-box">
+                <div class="editor-toolbar">
+                  <div class="tool-actions">
+                    <button type="button" class="btn-mini" id="openSpintaxBtn">
+                      <span data-icon="spintax" data-icon-size="13"></span>
+                      <span id="btnSpintaxLabel">Variasi Kata</span>
+                    </button>
+                    <button type="button" class="btn-mini" id="openTemplatesBtn">
+                      <span data-icon="templates" data-icon-size="13"></span>
+                      <span id="btnTemplatesLabel">Template</span>
+                    </button>
+                  </div>
+                  <span class="char-counter" id="charCountLabel">0 karakter</span>
+                </div>
+
+                <label for="postBodyInput" class="sr-only">Isi postingan</label>
+                <textarea id="postBodyInput" class="post-textarea" rows="4" placeholder="Tulis promosi atau info Anda di sini..."></textarea>
+              </div>
+
+              <div class="media-bar-clean">
+                <button type="button" class="btn-outline btn-sm" id="addMediaBtn">
+                  <span data-icon="media" data-icon-size="15"></span>
+                  <span id="addMediaLabel">Tambah Foto / Video</span>
+                </button>
+                <button type="button" class="btn-link-clean" id="toggleExtraOptionsBtn" aria-expanded="false">
+                  <span id="extraOptionsLabel">Fitur Tambahan (Format, Komentar, Versi)</span>
+                </button>
+              </div>
+
+              <div id="mediaPreviewList" class="media-list" hidden></div>
+
+              <!-- Collapsible Extra Options (Formatting, Colors, Versions, Comments, Photo Sets) -->
+              <div class="extra-drawer" id="extraOptionsDrawer" hidden>
+                <div class="extra-row-fmt">
+                  <div class="fmt-group" role="group" aria-label="Format teks">
+                    <button type="button" class="tool-btn" data-fmt="bold" title="Tebal"><strong>B</strong></button>
+                    <button type="button" class="tool-btn" data-fmt="italic" title="Miring"><em>I</em></button>
+                    <button type="button" class="tool-btn" data-fmt="h1" title="Judul">H1</button>
+                    <button type="button" class="tool-btn" data-fmt="ul" title="Daftar">List</button>
+                  </div>
+                  <div class="bg-inline">
+                    <span class="palette-label" id="cardColorLabel">Warna:</span>
+                    <div class="swatches" id="bgSwatches"></div>
+                  </div>
+                </div>
+
+                <div class="versions-bar" id="versionsBar">
+                  <span class="versions-label" id="versionsLabel">Versi Teks:</span>
+                  <div class="versions-pills" id="versionsPills"></div>
+                  <button type="button" class="btn-mini" id="addVersionBtn">
+                    <span data-icon="plus" data-icon-size="12"></span>
+                    <span id="addVersionLabel">Versi</span>
+                  </button>
+                </div>
+
+                <div class="extra-btns-row">
+                  <button type="button" class="btn-outline btn-sm" id="openCommentsBtn">
+                    <span data-icon="comment" data-icon-size="14"></span>
+                    <span id="commentsBtnLabel">Komentar Pertama</span>
+                  </button>
+                  <button type="button" class="btn-outline btn-sm" id="openImageSetsBtn">
+                    <span data-icon="sets" data-icon-size="14"></span>
+                    <span id="imageSetsBtnLabel">Set Foto Acak</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3: Speed & Safety -->
+            <div class="card step-card">
+              <div class="step-head">
+                <span class="step-dot is-done" id="step3Dot">&#10003;</span>
+                <div class="step-head-text">
+                  <h2 class="step-title" id="step3Title">Kecepatan &amp; Keamanan</h2>
+                  <p class="step-hint" id="step3Hint">Jeda antar grup membantu menjaga akun Facebook tetap aman.</p>
+                </div>
+                <button type="button" class="btn-mini" id="openProtectionBtn">Atur Detail...</button>
+              </div>
+
+              <div class="preset-grid" role="radiogroup" aria-label="Pilih kecepatan kirim">
+                <button type="button" class="preset-btn is-active" data-speed-preset="safe" role="radio" aria-checked="true">
+                  <span class="preset-name" id="presetSafeTitle">Santai &amp; Aman</span>
+                  <span class="preset-sub" id="presetSafeSub">~3.5 menit / grup</span>
+                </button>
+                <button type="button" class="preset-btn" data-speed-preset="normal" role="radio" aria-checked="false">
+                  <span class="preset-name" id="presetNormalTitle">Normal</span>
+                  <span class="preset-sub" id="presetNormalSub">~1.5 menit / grup</span>
+                </button>
+                <button type="button" class="preset-btn" data-speed-preset="fast" role="radio" aria-checked="false">
+                  <span class="preset-name" id="presetFastTitle">Cepat</span>
+                  <span class="preset-sub" id="presetFastSub">~45 detik / grup</span>
+                </button>
+              </div>
+
+              <div class="prot-footnote" id="protectionSub">Jeda 3.5 mnt · Jeda acak aktif</div>
+            </div>
+
+            <!-- Live Progress Card (shown during active run) -->
+            <div class="card progress-card" id="liveProgressCard" hidden>
+              <div class="progress-head">
+                <strong id="progressHeadline">Sedang mengirim ke grup...</strong>
+                <span class="progress-counts" id="progressCounts">0 / 0</span>
+              </div>
+              <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+              <div class="progress-meta" id="progressMeta">Menunggu...</div>
+              <div class="progress-actions">
+                <button type="button" class="btn-outline btn-sm" id="pauseResumeBtn">
+                  <span data-icon="pause" data-icon-size="13"></span>
+                  <span>Jeda</span>
+                </button>
+                <button type="button" class="btn-danger btn-sm" id="stopCampaignBtn">
+                  <span data-icon="stop" data-icon-size="13"></span>
+                  <span>Hentikan</span>
+                </button>
+              </div>
+              <div id="progressGroupResults" class="progress-results"></div>
+            </div>
+          </div>
+
+          <!-- Preview Column -->
+          <aside class="preview-column" id="previewColumn" hidden>
+            <div class="card preview-card">
+              <div class="preview-head">
+                <strong id="previewTitleLabel">Pratinjau Tampilan Grup</strong>
+                <button type="button" class="btn-mini" id="shufflePreviewBtn">Acak Variasi</button>
+              </div>
+              <div class="fb-mock-post" id="fbMockPost">
+                <div class="fb-mock-author">
+                  <span class="fb-mock-dot"></span>
+                  <div>
+                    <div class="fb-mock-name" id="previewAuthorName">Profil Anda</div>
+                    <div class="fb-mock-meta" id="previewMetaLabel">Baru saja · Postingan grup</div>
+                  </div>
+                </div>
+                <div class="fb-mock-body" id="previewBodyText">Tulis sesuatu di Langkah 2 untuk melihat pratinjau postingan.</div>
+                <div class="fb-mock-media" id="previewMediaGrid" hidden></div>
+                <div class="fb-mock-comment" id="previewCommentBox" hidden></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Tab 2: Queue -->
+      <section role="tabpanel" id="panelQueue" aria-labelledby="tabQueueBtn" class="tab-panel" hidden>
+        <div class="queue-header">
+          <div>
+            <h2 id="queueTitleLabel">Antrean Jadwal</h2>
+            <p class="muted-text" id="schedulerStatusSub">Penjadwal otomatis aktif</p>
+          </div>
+          <div class="inline-actions">
+            <button type="button" class="btn-outline btn-sm" id="importScheduleCsvBtn">Impor CSV</button>
+            <button type="button" class="btn-outline btn-sm" id="toggleSchedulerBtn">Jeda Semua</button>
+          </div>
+        </div>
+        <div id="queueList" class="stack-list"></div>
+        <div id="queueEmpty" class="empty-state" hidden>
+          <p><strong id="queueEmptyTitle">Belum ada postingan terjadwal.</strong></p>
+          <p class="muted-text" id="queueEmptyBody">Buat postingan di tab Buat Post, lalu klik Jadwalkan.</p>
+          <button type="button" class="btn-primary btn-sm" id="emptyScheduleCta">Buat Postingan</button>
+        </div>
+      </section>
+
+      <!-- Tab 3: History -->
+      <section role="tabpanel" id="panelHistory" aria-labelledby="historyBtn" class="tab-panel" hidden>
+        <div class="subview-head">
+          <button type="button" class="btn-outline btn-sm" id="historyBackBtn" hidden>Kembali</button>
+          <h2 id="historyTitleLabel">Riwayat Pengiriman</h2>
+          <div class="inline-actions">
+            <button type="button" class="btn-outline btn-sm" id="exportCsvBtn">
+              <span data-icon="export" data-icon-size="14"></span>
+              <span id="exportCsvLabel">Unduh CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="seg-group" role="group" aria-label="Tampilan riwayat">
+            <button type="button" class="seg-btn is-active" data-hist-mode="runs" id="histModeRuns">Per Kampanye</button>
+            <button type="button" class="seg-btn" data-hist-mode="groups" id="histModeGroups">Per Grup</button>
+          </div>
+          <div class="seg-group" role="group" aria-label="Filter status">
+            <button type="button" class="seg-btn is-active" data-hist-filter="all" id="histFilterAll">Semua</button>
+            <button type="button" class="seg-btn" data-hist-filter="success" id="histFilterSent">Terkirim</button>
+            <button type="button" class="seg-btn" data-hist-filter="failed" id="histFilterFailed">Gagal</button>
+          </div>
+        </div>
+
+        <div id="historyList" class="stack-list"></div>
+        <div id="historyEmpty" class="empty-state" hidden>
+          <p><strong id="historyEmptyTitle">Belum ada riwayat pengiriman.</strong></p>
+          <p class="muted-text" id="historyEmptyBody">Hasil pengiriman ke setiap grup akan tercatat otomatis di sini.</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Sticky Bottom Action Dock (always visible on Compose tab) -->
+    <footer class="sticky-dock" id="composeDock">
+      <div class="readiness-bar" id="readinessBar">Langkah berikutnya: pilih minimal 1 grup pada Langkah 1.</div>
+      <div class="inline-alert" id="composeAlert" hidden role="alert"></div>
+      <div class="compose-footer">
+        <button type="button" class="btn-outline btn-sm" id="togglePreviewBtn">Pratinjau</button>
+        <button type="button" class="btn-outline btn-sm" id="openScheduleBtn">
+          <span data-icon="queue" data-icon-size="14"></span>
+          <span id="scheduleBtnLabel">Jadwalkan</span>
+        </button>
+        <button type="button" class="btn-primary" id="publishNowBtn">
+          <span data-icon="play" data-icon-size="15"></span>
+          <span id="publishNowLabel">Kirim Sekarang</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Shared Modal Backdrop -->
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal-box" id="modalBox" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h3 id="modalTitle">Dialog</h3>
+        <button type="button" class="icon-btn" id="modalCloseBtn" aria-label="Tutup dialog">
+          <span data-icon="close" data-icon-size="16"></span>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="../shared/icons.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/license.js"></script>
+  <script src="../shared/spintax.js"></script>
+  <script src="../shared/media-db.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

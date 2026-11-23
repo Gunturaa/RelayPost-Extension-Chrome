@@ -1,0 +1,26 @@
+{
+  "extName": {
+    "message": "RelayPost: Facebook Group Auto Poster & Scheduler"
+  },
+  "extDescription": {
+    "message": "Publish and schedule posts across multiple Facebook groups with Spintax variations, photo sets, first comments, and pacing controls."
+  },
+  "shareBtnLabel": {
+    "message": "Share to groups"
+  },
+  "shareBtnAria": {
+    "message": "Share this post to your Facebook groups with RelayPost"
+  },
+  "shareSheetLoading": {
+    "message": "Preparing post details..."
+  },
+  "missedPostsBadge": {
+    "message": "Missed scheduled posts: $COUNT$. Open the Queue to post or reschedule.",
+    "placeholders": {
+      "count": { "content": "$1", "example": "2" }
+    }
+  },
+  "campaignStoppedBadge": {
+    "message": "The last campaign stopped early. Open RelayPost to inspect the group log."
+  }
+}

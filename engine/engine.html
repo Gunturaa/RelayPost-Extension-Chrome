@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RelayPost Engine</title>
+  <link rel="icon" type="image/png" href="../assets/icons/icon-32.png" />
+  <link rel="stylesheet" href="engine.css" />
+</head>
+<body>
+  <div class="keep-open-bar" role="note" id="keepOpenBar">
+    <span class="keep-open-icon" data-icon="shield" data-icon-size="16"></span>
+    <span id="keepOpenText"><strong>Biarkan tab ini tetap terbuka saat pengiriman berjalan.</strong> Jika ditutup, proses di latar belakang akan berhenti.</span>
+  </div>
+
+  <header class="topbar">
+    <div class="brand">
+      <img src="../assets/icons/logo.svg" alt="RelayPost" width="28" height="28" />
+      <span class="brand-name">RelayPost</span>
+      <span class="brand-tag">Engine</span>
+    </div>
+    <div class="topbar-actions">
+      <button type="button" class="btn-ghost" id="themeToggleBtn" aria-label="Toggle color theme" title="Switch light or dark theme">
+        <span data-icon="moon" data-icon-size="16" id="themeIcon"></span>
+        <span id="themeLabel">Dark</span>
+      </button>
+      <div class="status-pill" id="connBadge">
+        <span class="status-dot" id="connDot"></span>
+        <span id="connText">Checking session...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero-card">
+      <div class="hero-main">
+        <p class="kicker">Background runner</p>
+        <div class="hero-status-row">
+          <span class="hero-dot" id="heroDot"></span>
+          <h1 id="heroHeadline">Ready</h1>
+        </div>
+        <p class="hero-sub" id="heroSub">Posts, media uploads, and scheduled campaigns execute from this pinned tab.</p>
+
+        <div class="session-box">
+          <div class="avatar" id="avatarEl">?</div>
+          <div class="session-meta">
+            <div class="session-name" id="userNameEl">Checking Facebook session...</div>
+            <div class="session-sub" id="userSubEl">Open facebook.com if signed out</div>
+          </div>
+          <button type="button" class="btn-outline" id="refreshBtn">
+            <span data-icon="sync" data-icon-size="14"></span>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="meta-stat">
+          <div class="meta-label">Session uptime</div>
+          <div class="meta-val" id="uptimeEl">00:00:00</div>
+        </div>
+        <div class="meta-stat">
+          <div class="meta-label">Last post</div>
+          <div class="meta-val" id="lastPostEl">None yet</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics-grid" aria-label="Safety and session metrics">
+      <div class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">Posts today</span>
+          <span class="metric-icon" data-icon="compose" data-icon-size="16"></span>
+        </div>
+        <div class="metric-value" id="postsTodayEl">0 / 200</div>
+        <div class="metric-sub" id="postsTodaySub">Daily safety threshold</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">Volume pacing</span>
+          <span class="metric-icon" data-icon="shield" data-icon-size="16"></span>
+        </div>
+        <div class="metric-value" id="delayTierEl">1.0x</div>
+        <div class="metric-sub">Multiplier for extra-safe mode</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">Campaign state</span>
+          <span class="metric-icon" data-icon="play" data-icon-size="16"></span>
+        </div>
+        <div class="metric-value" id="campaignStateEl">Idle</div>
+        <div class="metric-sub" id="campaignSubEl">Waiting for next run</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">Log entries</span>
+          <span class="metric-icon" data-icon="history" data-icon-size="16"></span>
+        </div>
+        <div class="metric-value" id="logCountEl">0</div>
+        <div class="metric-sub">Stored locally in browser</div>
+      </div>
+    </section>
+
+    <section class="log-card" aria-label="Engine activity log">
+      <div class="log-head">
+        <h2 id="logTitle">Log Aktivitas</h2>
+        <div class="log-actions">
+          <button type="button" class="btn-outline" id="downloadLogsBtn">
+            <span data-icon="export" data-icon-size="14"></span>
+            <span id="downloadLogsLabel">Unduh .txt</span>
+          </button>
+          <button type="button" class="btn-outline" id="clearLogsBtn">
+            <span data-icon="trash" data-icon-size="14"></span>
+            <span id="clearLogsLabel">Bersihkan</span>
+          </button>
+        </div>
+      </div>
+      <div class="log-body" id="logBody">
+        <div class="log-empty" id="logEmpty">
+          <p id="logEmptyText">Belum ada aktivitas. Mulai kirim atau jadwalkan postingan dari popup RelayPost.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../shared/icons.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/media-db.js"></script>
+  <script src="engine.js"></script>
+</body>
+</html>

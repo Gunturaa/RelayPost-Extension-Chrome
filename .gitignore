@@ -1,0 +1,17 @@
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies & build artifacts
+_metadata/
+node_modules/
+.vercel/
+*.zip
+*.crx
+*.pem
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+*.log

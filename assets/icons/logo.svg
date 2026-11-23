@@ -1,0 +1,14 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="iosBlue" x1="16" y1="8" x2="112" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38A8FF"/>
+      <stop offset="55%" stop-color="#007AFF"/>
+      <stop offset="100%" stop-color="#0052CC"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#iosBlue)"/>
+  <!-- SF-inspired paperplane + multi-relay waves -->
+  <path d="M96 34L30 60.5c-2.6 1-2.4 4.7.3 5.5l24.2 7.2 7.2 24.2c.8 2.7 4.5 2.9 5.5.3L98.5 36.8c.9-2.2-1.2-4.3-2.5-2.8z" fill="#FFFFFF"/>
+  <path d="M54.5 73.2L94 37" stroke="#007AFF" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M35 88a16 16 0 0 1 11 11" stroke="#FFFFFF" stroke-opacity="0.72" stroke-width="5.5" stroke-linecap="round"/>
+</svg>

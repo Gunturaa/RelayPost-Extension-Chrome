@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RelayPost Media Picker</title>
+  <link rel="icon" type="image/png" href="../assets/icons/icon-32.png" />
+  <link rel="stylesheet" href="media-picker.css" />
+</head>
+<body>
+  <main class="picker-card">
+    <header class="picker-head">
+      <div class="picker-icon" data-icon="media" data-icon-size="18"></div>
+      <div>
+        <h1 id="pickerHeading">Lampirkan Foto / Video</h1>
+        <p id="pickerSub">JPG, PNG, GIF, WebP, atau MP4 (maks. 100 MB)</p>
+      </div>
+    </header>
+
+    <label class="dropzone" id="dropzone" for="fileInput">
+      <input id="fileInput" type="file" accept="image/*,video/*" multiple />
+      <span class="dz-icon" data-icon="plus" data-icon-size="22"></span>
+      <span class="dz-title" id="dzTitle">Klik untuk memilih atau seret file ke sini</span>
+      <span class="dz-hint" id="dzHint">Maksimal 10 file media per postingan</span>
+    </label>
+
+    <div id="fileList" class="file-list"></div>
+    <div id="statusLine" class="status-line" aria-live="polite"></div>
+
+    <footer class="picker-foot">
+      <button type="button" class="btn-outline" id="closeBtn">Tutup</button>
+      <button type="button" class="btn-primary" id="saveBtn">Pasang ke Postingan</button>
+    </footer>
+  </main>
+
+  <script src="../shared/icons.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/media-db.js"></script>
+  <script src="media-picker.js"></script>
+</body>
+</html>
