@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/upgrade", "destination": "/upgrade.html" },
-    { "source": "/privacy", "destination": "/privacy.html" }
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/admin", "destination": "/admin.html" }
   ]
 }

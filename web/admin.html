@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Panel — RelayPost</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    :root {
+      --danger: #D92D20;
+      --danger-soft: #FEF3F2;
+      --warn: #B54708;
+      --warn-soft: #FFFAEB;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --danger: #FF6961;
+        --danger-soft: #3B1212;
+        --warn: #FFD60A;
+        --warn-soft: #332900;
+      }
+    }
+
+    .admin-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+    }
+
+    .login-wrap {
+      max-width: 420px;
+      margin: 64px auto;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .field input, .field select {
+      width: 100%;
+      padding: 10px 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+    }
+    .field input:focus, .field select:focus {
+      outline: 2px solid var(--brand);
+      outline-offset: 1px;
+    }
+    .field-hint {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
+    }
+    .stat-label {
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .stat-val {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 16px;
+    }
+
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .chip-btn {
+      padding: 7px 13px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+    .chip-btn:hover { background: var(--surface-2); }
+    .chip-btn.is-active {
+      background: var(--brand);
+      color: var(--brand-ink);
+      border-color: var(--brand);
+    }
+
+    .created-banner {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--ok-soft);
+      border: 1px solid rgba(27, 126, 54, 0.25);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .created-key {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ok);
+      letter-spacing: 0.03em;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .search-input {
+      flex: 1 1 240px;
+      max-width: 360px;
+      padding: 9px 14px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .mono-key {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 11.5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-active { background: var(--ok-soft); color: var(--ok); }
+    .badge-expired { background: var(--warn-soft); color: var(--warn); }
+    .badge-revoked { background: var(--danger-soft); color: var(--danger); }
+
+    .btn-sm {
+      padding: 5px 10px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.12s ease;
+    }
+    .btn-sm:hover { background: var(--surface-2); }
+    .btn-sm.is-danger { color: var(--danger); border-color: rgba(217, 45, 32, 0.28); }
+    .btn-sm.is-danger:hover { background: var(--danger-soft); }
+    .btn-sm.is-ok { color: var(--ok); border-color: rgba(27, 126, 54, 0.28); }
+    .btn-sm.is-ok:hover { background: var(--ok-soft); }
+
+    .actions-cell {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .alert-box {
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      margin-bottom: 14px;
+      display: none;
+    }
+    .alert-box.is-visible { display: block; }
+    .alert-box.is-error { background: var(--danger-soft); color: var(--danger); }
+    .alert-box.is-info { background: var(--brand-soft); color: var(--brand); }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 50;
+      background: var(--ink);
+      color: var(--surface);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .toast.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .muted-small { font-size: 12px; color: var(--muted); }
+    .hidden { display: none !important; }
+
+    @media (max-width: 760px) {
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner" style="max-width: 1080px;">
+      <a href="/" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M21 3L3 10.2c-.8.3-.7 1.5.1 1.7l7.2 2.1 2.1 7.2c.2.8 1.4.9 1.7.1L21.7 3.8c.3-.7-.3-1.3-.7-.8z" fill="#FFFFFF"/>
+          </svg>
+        </span>
+        <span>RelayPost Admin</span>
+      </a>
+      <nav class="nav-links" aria-label="Navigasi admin">
+        <a href="/">Beranda</a>
+        <a href="/upgrade">Upgrade</a>
+        <button id="logoutBtn" type="button" class="btn-sm hidden">Keluar</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    <!-- Login View -->
+    <section id="loginView" class="login-wrap card">
+      <span class="kicker" style="margin-bottom: 10px;">Akses Owner</span>
+      <h2 style="margin-bottom: 6px;">Masuk Admin Panel</h2>
+      <p style="margin-bottom: 18px;">Kelola lisensi RelayPost PRO, buat akses gratis untuk teman/tester, perpanjang masa aktif, atau reset perangkat.</p>
+      <div id="loginError" class="alert-box is-error" role="alert"></div>
+      <form id="loginForm">
+        <div class="field">
+          <label for="adminPasswordInput">Password Admin</label>
+          <input id="adminPasswordInput" type="password" placeholder="Masukkan ADMIN_PASSWORD" autocomplete="current-password" required />
+        </div>
+        <button id="loginSubmitBtn" type="submit" class="btn-primary" style="width: 100%;">Masuk</button>
+      </form>
+    </section>
+
+    <!-- Dashboard View -->
+    <section id="dashboardView" class="hidden">
+      <div id="globalAlert" class="alert-box is-error" role="alert"></div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Lisensi</div>
+          <div class="stat-val" id="statTotal">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">PRO Aktif</div>
+          <div class="stat-val" id="statActive" style="color: var(--ok);">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Expired / Revoked</div>
+          <div class="stat-val" id="statInactive">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Perangkat Terdaftar</div>
+          <div class="stat-val" id="statDevices">0</div>
+        </div>
+      </div>
+
+      <!-- Create / Grant Free Pro Card -->
+      <article class="card" style="margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;">
+          <div>
+            <h2 style="margin-bottom: 2px;">Buat / Beri Akses PRO</h2>
+            <p style="margin: 0;">Generate kode lisensi baru untuk pembeli atau kasih akses PRO gratis.</p>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom: 10px;">
+          <label>Durasi Akses</label>
+          <div class="preset-row" id="durationPresets">
+            <button type="button" class="chip-btn" data-days="7">7 Hari (Trial)</button>
+            <button type="button" class="chip-btn is-active" data-days="30">30 Hari (Bulanan)</button>
+            <button type="button" class="chip-btn" data-days="365">1 Tahun</button>
+            <button type="button" class="chip-btn" data-days="lifetime">Lifetime (Gratis Selamanya)</button>
+            <button type="button" class="chip-btn" data-days="custom">Custom Tanggal</button>
+          </div>
+        </div>
+
+        <form id="createForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="customerEmail">Penerima (Nama / Email)</label>
+              <input id="customerEmail" type="text" placeholder="misal: budi@gmail.com atau Budi (Teman)" />
+            </div>
+            <div class="field">
+              <label for="licenseNote">Catatan (Opsional)</label>
+              <input id="licenseNote" type="text" placeholder="misal: Free Pro dari Owner / Order WA QRIS" />
+            </div>
+            <div class="field">
+              <label for="customKey">Kode Lisensi (Opsional)</label>
+              <input id="customKey" type="text" placeholder="Kosongkan untuk auto-generate RLY-PRO-XXXX-XXXX" />
+              <span class="field-hint">Bisa isi custom, misal: <code>RLY-PRO-BUDI</code></span>
+            </div>
+            <div class="field">
+              <label for="maxDevices">Maksimal Perangkat</label>
+              <input id="maxDevices" type="number" min="1" max="50" value="2" />
+            </div>
+            <div class="field hidden" id="customDateWrap">
+              <label for="customExpiresAt">Tanggal Kadaluarsa</label>
+              <input id="customExpiresAt" type="date" />
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
+            <button id="createSubmitBtn" type="submit" class="btn-primary">Generate Kode PRO</button>
+            <span id="noteWarning" class="muted-small hidden">Catatan belum tersimpan ke DB — jalankan <code>supabase-schema.sql</code> untuk menambah kolom <code>note</code>.</span>
+          </div>
+        </form>
+
+        <div id="createdBanner" class="created-banner hidden">
+          <div>
+            <div class="muted-small" style="color: var(--ok); font-weight: 600;">Lisensi PRO berhasil dibuat:</div>
+            <div class="created-key" id="createdKeyText"></div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button id="copyCreatedKeyBtn" type="button" class="btn-sm is-ok">Salin Kode</button>
+            <button id="copyInviteBtn" type="button" class="btn-sm">Salin Pesan WA / Chat</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- License List Card -->
+      <article class="card">
+        <div class="toolbar">
+          <input id="searchInput" type="search" class="search-input" placeholder="Cari kode, nama/email, atau catatan..." />
+          <div class="filter-row">
+            <button type="button" class="chip-btn is-active" data-filter="all">Semua</button>
+            <button type="button" class="chip-btn" data-filter="active">Aktif</button>
+            <button type="button" class="chip-btn" data-filter="expired">Expired</button>
+            <button type="button" class="chip-btn" data-filter="revoked">Revoked</button>
+            <button id="refreshBtn" type="button" class="btn-sm">Refresh</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Kode Lisensi</th>
+                <th>Status</th>
+                <th>Penerima &amp; Catatan</th>
+                <th>Masa Aktif</th>
+                <th>Perangkat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="licenseTableBody">
+              <tr><td colspan="6" class="muted-small">Memuat data lisensi...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "relaypost_admin_pw";
+      const API_URL = "/api/admin-licenses";
+
+      let adminPassword = sessionStorage.getItem(STORAGE_KEY) || "";
+      let allLicenses = [];
+      let selectedDuration = "30";
+      let activeFilter = "all";
+      let lastCreatedLicense = null;
+
+      const $ = (id) => document.getElementById(id);
+      const loginView = $("loginView");
+      const dashboardView = $("dashboardView");
+      const logoutBtn = $("logoutBtn");
+      const loginError = $("loginError");
+      const globalAlert = $("globalAlert");
+      const tableBody = $("licenseTableBody");
+      const toastEl = $("toast");
+
+      let toastTimer = null;
+      function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add("is-visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove("is-visible"), 2400);
+      }
+
+      function showError(el, msg) {
+        if (!msg) {
+          el.textContent = "";
+          el.classList.remove("is-visible");
+          return;
+        }
+        el.textContent = msg;
+        el.classList.add("is-visible");
+      }
+
+      async function apiFetch(method, body, query = "") {
+        const res = await fetch(API_URL + query, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Password": adminPassword
+          },
+          body: body ? JSON.stringify(body) : undefined
+        });
+        const data = await res.json().catch(() => ({ ok: false, error: "Respon server tidak valid." }));
+        if (!res.ok) {
+          const err = new Error(data.error || `Error ${res.status}`);
+          err.status = res.status;
+          throw err;
+        }
+        return data;
+      }
+
+      function getLicenseState(lic) {
+        if (lic.status !== "active") return "revoked";
+        if (lic.expires_at && Date.parse(lic.expires_at) < Date.now()) return "expired";
+        return "active";
+      }
+
+      function formatDate(iso) {
+        if (!iso) return "Lifetime";
+        const d = new Date(iso);
+        if (Number.isNaN(d.getTime())) return "-";
+        return d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+      }
+
+      function formatRemaining(iso) {
+        if (!iso) return "Selamanya";
+        const diffMs = Date.parse(iso) - Date.now();
+        const days = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
+        if (days < 0) return `Lewat ${Math.abs(days)} hari`;
+        if (days === 0) return "Berakhir hari ini";
+        return `Sisa ${days} hari`;
+      }
+
+      function escapeHtml(str) {
+        return String(str || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function copyText(text, label) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => showToast(label || "Disalin!"));
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+          showToast(label || "Disalin!");
+        }
+      }
+
+      function renderStats() {
+        let active = 0;
+        let inactive = 0;
+        let devices = 0;
+        for (const lic of allLicenses) {
+          const state = getLicenseState(lic);
+          if (state === "active") active += 1;
+          else inactive += 1;
+          devices += Number(lic.devices_used || 0);
+        }
+        $("statTotal").textContent = String(allLicenses.length);
+        $("statActive").textContent = String(active);
+        $("statInactive").textContent = String(inactive);
+        $("statDevices").textContent = String(devices);
+      }
+
+      function renderTable() {
+        const q = $("searchInput").value.trim().toLowerCase();
+        const filtered = allLicenses.filter((lic) => {
+          const state = getLicenseState(lic);
+          if (activeFilter !== "all" && state !== activeFilter) return false;
+          if (!q) return true;
+          const hay = [lic.license_key, lic.customer_email, lic.note].join(" ").toLowerCase();
+          return hay.includes(q);
+        });
+
+        if (filtered.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="6" class="muted-small">Belum ada lisensi yang cocok.</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = filtered
+          .map((lic) => {
+            const state = getLicenseState(lic);
+            const badgeClass =
+              state === "active" ? "badge-active" : state === "expired" ? "badge-expired" : "badge-revoked";
+            const badgeLabel =
+              state === "active" ? "Aktif" : state === "expired" ? "Expired" : "Revoked";
+            const toggleLabel = lic.status === "active" ? "Revoke" : "Aktifkan";
+            const toggleClass = lic.status === "active" ? "is-danger" : "is-ok";
+            const devsUsed = Number(lic.devices_used || 0);
+            const maxDevs = Number(lic.max_devices || 2);
+
+            return `
+              <tr data-id="${escapeHtml(lic.id)}">
+                <td>
+                  <div class="mono-key">${escapeHtml(lic.license_key)}</div>
+                  <div style="margin-top: 6px;">
+                    <button type="button" class="btn-sm" data-action="copy" data-key="${escapeHtml(lic.license_key)}">Salin</button>
+                  </div>
+                </td>
+                <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+                <td>
+                  <div style="font-weight: 600;">${escapeHtml(lic.customer_email || "-")}</div>
+                  ${lic.note ? `<div class="muted-small" style="margin-top: 2px;">${escapeHtml(lic.note)}</div>` : ""}
+                  <div class="muted-small" style="margin-top: 4px;">Dibuat: ${formatDate(lic.created_at)}</div>
+                </td>
+                <td>
+                  <div style="font-weight: 600;">${formatDate(lic.expires_at)}</div>
+                  <div class="muted-small">${formatRemaining(lic.expires_at)}</div>
+                </td>
+                <td>
+                  <div style="font-weight: 600;">${devsUsed} / ${maxDevs}</div>
+                  ${devsUsed > 0 ? `<button type="button" class="btn-sm" style="margin-top: 6px;" data-action="reset_devices">Reset Device</button>` : '<span class="muted-small">Belum dipakai</span>'}
+                </td>
+                <td>
+                  <div class="actions-cell">
+                    <button type="button" class="btn-sm" data-action="extend_30">+30 Hr</button>
+                    <button type="button" class="btn-sm" data-action="extend_365">+1 Thn</button>
+                    ${lic.expires_at ? `<button type="button" class="btn-sm" data-action="make_lifetime">Lifetime</button>` : ""}
+                    <button type="button" class="btn-sm ${toggleClass}" data-action="toggle_status" data-next="${lic.status === "active" ? "revoked" : "active"}">${toggleLabel}</button>
+                    <button type="button" class="btn-sm is-danger" data-action="delete">Hapus</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+      }
+
+      async function loadLicenses() {
+        showError(globalAlert, "");
+        const data = await apiFetch("GET");
+        allLicenses = Array.isArray(data.licenses) ? data.licenses : [];
+        $("noteWarning").classList.toggle("hidden", data.supportsNote !== false);
+        renderStats();
+        renderTable();
+      }
+
+      function enterDashboard() {
+        loginView.classList.add("hidden");
+        dashboardView.classList.remove("hidden");
+        logoutBtn.classList.remove("hidden");
+      }
+
+      function exitDashboard() {
+        adminPassword = "";
+        sessionStorage.removeItem(STORAGE_KEY);
+        dashboardView.classList.add("hidden");
+        logoutBtn.classList.add("hidden");
+        loginView.classList.remove("hidden");
+        $("adminPasswordInput").value = "";
+        $("adminPasswordInput").focus();
+      }
+
+      // Login handler
+      $("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showError(loginError, "");
+        const pw = $("adminPasswordInput").value.trim();
+        if (!pw) return;
+
+        const btn = $("loginSubmitBtn");
+        btn.disabled = true;
+        btn.textContent = "Memeriksa...";
+        adminPassword = pw;
+
+        try {
+          await loadLicenses();
+          sessionStorage.setItem(STORAGE_KEY, pw);
+          enterDashboard();
+        } catch (err) {
+          adminPassword = "";
+          showError(loginError, err.message || "Gagal masuk.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Masuk";
+        }
+      });
+
+      logoutBtn.addEventListener("click", exitDashboard);
+
+      // Duration preset buttons
+      $("durationPresets").addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-days]");
+        if (!btn) return;
+        selectedDuration = btn.dataset.days;
+        $("durationPresets").querySelectorAll("button").forEach((b) => {
+          b.classList.toggle("is-active", b === btn);
+        });
+        $("customDateWrap").classList.toggle("hidden", selectedDuration !== "custom");
+      });
+
+      // Create license form
+      $("createForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showError(globalAlert, "");
+        const btn = $("createSubmitBtn");
+        btn.disabled = true;
+        btn.textContent = "Membuat...";
+
+        try {
+          const payload = {
+            customerEmail: $("customerEmail").value.trim(),
+            note: $("licenseNote").value.trim(),
+            licenseKey: $("customKey").value.trim(),
+            maxDevices: Number($("maxDevices").value) || 2
+          };
+
+          if (selectedDuration === "custom") {
+            const rawDate = $("customExpiresAt").value;
+            if (!rawDate) {
+              throw new Error("Pilih tanggal kadaluarsa terlebih dahulu.");
+            }
+            payload.expiresAt = new Date(`${rawDate}T23:59:59Z`).toISOString();
+          } else if (selectedDuration === "lifetime") {
+            payload.expiresAt = null;
+          } else {
+            payload.durationDays = Number(selectedDuration);
+          }
+
+          const resp = await apiFetch("POST", payload);
+          lastCreatedLicense = resp.license;
+          $("createdKeyText").textContent = resp.license.license_key;
+          $("createdBanner").classList.remove("hidden");
+
+          $("customerEmail").value = "";
+          $("licenseNote").value = "";
+          $("customKey").value = "";
+
+          showToast("Kode PRO berhasil dibuat!");
+          await loadLicenses();
+        } catch (err) {
+          showError(globalAlert, err.message || "Gagal membuat lisensi.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Generate Kode PRO";
+        }
+      });
+
+      $("copyCreatedKeyBtn").addEventListener("click", () => {
+        if (!lastCreatedLicense) return;
+        copyText(lastCreatedLicense.license_key, "Kode lisensi disalin!");
+      });
+
+      $("copyInviteBtn").addEventListener("click", () => {
+        if (!lastCreatedLicense) return;
+        const expText = lastCreatedLicense.expires_at
+          ? `berlaku sampai ${formatDate(lastCreatedLicense.expires_at)}`
+          : "aktif selamanya (Lifetime)";
+        const msg =
+          `Halo! Ini kode lisensi RelayPost PRO untuk kamu (${expText}):\n\n` +
+          `Kode: ${lastCreatedLicense.license_key}\n\n` +
+          `Cara aktifkan:\n` +
+          `1. Buka ekstensi RelayPost di Chrome\n` +
+          `2. Klik tombol "Free" di pojok kanan atas\n` +
+          `3. Tempel kode di atas lalu klik "Aktifkan Lisensi"`;
+        copyText(msg, "Pesan aktivasi disalin!");
+      });
+
+      // Filter & search
+      $("searchInput").addEventListener("input", renderTable);
+      document.querySelectorAll("button[data-filter]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activeFilter = btn.dataset.filter;
+          document.querySelectorAll("button[data-filter]").forEach((b) => {
+            b.classList.toggle("is-active", b === btn);
+          });
+          renderTable();
+        });
+      });
+
+      $("refreshBtn").addEventListener("click", async () => {
+        try {
+          await loadLicenses();
+          showToast("Data diperbarui");
+        } catch (err) {
+          showError(globalAlert, err.message);
+        }
+      });
+
+      // Row actions
+      tableBody.addEventListener("click", async (e) => {
+        const btn = e.target.closest("button[data-action]");
+        if (!btn) return;
+        const row = btn.closest("tr[data-id]");
+        if (!row) return;
+
+        const id = row.dataset.id;
+        const action = btn.dataset.action;
+
+        if (action === "copy") {
+          copyText(btn.dataset.key, "Kode lisensi disalin!");
+          return;
+        }
+
+        showError(globalAlert, "");
+        try {
+          if (action === "extend_30") {
+            await apiFetch("PATCH", { id, extendDays: 30 });
+            showToast("Masa aktif ditambah +30 hari");
+          } else if (action === "extend_365") {
+            await apiFetch("PATCH", { id, extendDays: 365 });
+            showToast("Masa aktif ditambah +1 tahun");
+          } else if (action === "make_lifetime") {
+            if (!confirm("Ubah lisensi ini menjadi Lifetime (tanpa batas waktu)?")) return;
+            await apiFetch("PATCH", { id, expiresAt: null, status: "active" });
+            showToast("Lisensi diubah ke Lifetime");
+          } else if (action === "reset_devices") {
+            if (!confirm("Reset semua perangkat terdaftar untuk lisensi ini?")) return;
+            await apiFetch("PATCH", { id, action: "reset_devices" });
+            showToast("Daftar perangkat berhasil direset");
+          } else if (action === "toggle_status") {
+            const nextStatus = btn.dataset.next;
+            await apiFetch("PATCH", { id, status: nextStatus });
+            showToast(nextStatus === "active" ? "Lisensi diaktifkan kembali" : "Lisensi dinonaktifkan (Revoked)");
+          } else if (action === "delete") {
+            if (!confirm("Hapus permanen lisensi ini? Tindakan tidak dapat dibatalkan.")) return;
+            await apiFetch("DELETE", { id });
+            showToast("Lisensi dihapus");
+          }
+          await loadLicenses();
+        } catch (err) {
+          showError(globalAlert, err.message || "Gagal memproses aksi.");
+        }
+      });
+
+      // Auto-login if session password already stored
+      if (adminPassword) {
+        loadLicenses()
+          .then(enterDashboard)
+          .catch(() => exitDashboard());
+      }
+    })();
+  </script>
+</body>
+</html>

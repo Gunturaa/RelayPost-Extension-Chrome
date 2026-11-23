@@ -8,9 +8,14 @@ create table if not exists public.relaypost_licenses (
   status text not null default 'active', -- 'active' or 'revoked'
   max_devices integer not null default 2,
   customer_email text,
+  note text,
   expires_at timestamptz,                -- null = lifetime
   created_at timestamptz not null default now()
 );
+
+-- Aman dijalankan ulang pada database yang sudah ada:
+alter table public.relaypost_licenses
+  add column if not exists note text;
 
 create table if not exists public.relaypost_license_devices (
   id uuid primary key default gen_random_uuid(),

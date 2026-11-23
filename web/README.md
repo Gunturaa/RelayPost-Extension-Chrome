@@ -13,11 +13,14 @@ Folder ini siap langsung di-deploy ke **Vercel** sebagai Root Directory `web`.
    - Di **Project Settings -> Environment Variables**, tambahkan:
      - `SUPABASE_URL`
      - `SUPABASE_SECRET_KEY`
+     - `ADMIN_PASSWORD` (password rahasia untuk membuka halaman `/admin`)
    - Deploy. Endpoint dan halaman berikut akan langsung aktif:
      - `https://<domain-anda>.vercel.app/` (Landing page)
      - `https://<domain-anda>.vercel.app/upgrade` (Halaman Upgrade & Pembayaran)
      - `https://<domain-anda>.vercel.app/privacy` (Kebijakan Privasi untuk Chrome Web Store)
+     - `https://<domain-anda>.vercel.app/admin` (Admin Panel untuk generate & kelola lisensi PRO)
      - `POST https://<domain-anda>.vercel.app/api/verify-license` (API validasi lisensi)
+     - `GET/POST/PATCH/DELETE https://<domain-anda>.vercel.app/api/admin-licenses` (API Admin)
 
 3. **Hubungkan Ekstensi Chrome**
    - Edit `../shared/license.js`: isi `verifyEndpoint` dengan `https://<domain-anda>.vercel.app/api/verify-license` dan `checkoutUrl` dengan `https://<domain-anda>.vercel.app/upgrade`.
