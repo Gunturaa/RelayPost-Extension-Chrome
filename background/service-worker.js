@@ -46,17 +46,27 @@ async function verifyLicenseRemote(licenseKey, deviceId) {
     });
     const data = await res.json().catch(() => null);
     if (!res.ok || !data || !data.valid) {
-      return { valid: false, error: data?.error || data?.message || `License validation failed (HTTP ${res.status}).` };
+      const rejected = res.status === 400 || res.status === 403 || res.status === 404;
+      return {
+        valid: false,
+        rejected,
+        error: data?.error || data?.message || `License validation failed (HTTP ${res.status}).`
+      };
     }
     return {
       valid: true,
+      rejected: false,
       plan: data.plan === "pro" || data.valid ? "pro" : "free",
       expiresAt: data.expiresAt || null,
       customerEmail: data.customerEmail || null,
       mode: "remote"
     };
   } catch (err) {
-    return { valid: false, error: err?.name === "AbortError" ? "License server timed out." : "Could not reach license server." };
+    return {
+      valid: false,
+      rejected: false,
+      error: err?.name === "AbortError" ? "License server timed out." : "Could not reach license server."
+    };
   } finally {
     clearTimeout(timer);
   }
@@ -87,7 +97,7 @@ async function getLicenseState(forceRevalidate = false) {
       await lsSet({ relayLicense: updated });
       return updated;
     }
-    if (forceRevalidate) {
+    if (check.rejected || forceRevalidate) {
       const revoked = { ...base, plan: "free", status: "inactive", verifiedAt: Date.now() };
       await lsSet({ relayLicense: revoked });
       return revoked;
@@ -120,6 +130,32 @@ async function activateLicenseKey(rawKey) {
 }
 
 async function deactivateLicense() {
+  const cfg = self.RelayLicense.LICENSE_CONFIG;
+  const { relayLicense = null } = await lsGet("relayLicense");
+
+  if (cfg.verifyEndpoint && relayLicense?.licenseKey) {
+    const deviceId = await getOrCreateDeviceId();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    try {
+      await fetch(cfg.verifyEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          action: "deactivate",
+          licenseKey: relayLicense.licenseKey,
+          deviceId,
+          product: "relaypost"
+        }),
+        signal: controller.signal
+      });
+    } catch {
+      // Best-effort remote release; always allow local deactivation.
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   const freeState = { plan: "free", status: "free", licenseKey: "", expiresAt: null, verifiedAt: Date.now() };
   await lsSet({ relayLicense: freeState });
   return { ok: true, license: freeState };

@@ -9,9 +9,9 @@
     // Production license validation endpoint (POST JSON: { licenseKey, deviceId, product })
     // Expected JSON response: { valid: true, plan: "pro", expiresAt: "2027-01-01T00:00:00Z", customerEmail?: "..." }
     // Leave empty ("") during local testing to allow offline demo keys (prefix "RLY-PRO-").
-    verifyEndpoint: "",
+    verifyEndpoint: "https://relaypost-web.vercel.app/api/verify-license",
     // Checkout page URL (Mayar, Midtrans, Lemon Squeezy, Gumroad, or your own landing page)
-    checkoutUrl: "https://relaypost.example.com/upgrade",
+    checkoutUrl: "https://relaypost-web.vercel.app/upgrade",
     // Re-check remote license every 24 hours when verifyEndpoint is configured
     revalidateIntervalMs: 24 * 60 * 60 * 1000
   };

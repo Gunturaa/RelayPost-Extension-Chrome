@@ -1,0 +1,26 @@
+{
+  "extName": {
+    "message": "RelayPost: Auto-Post & Jadwal Grup Facebook"
+  },
+  "extDescription": {
+    "message": "Kirim dan jadwalkan postingan ke banyak grup Facebook dengan variasi Spintax, set foto, komentar pertama, dan jeda aman."
+  },
+  "shareBtnLabel": {
+    "message": "Bagikan ke grup"
+  },
+  "shareBtnAria": {
+    "message": "Bagikan postingan ini ke grup Facebook Anda dengan RelayPost"
+  },
+  "shareSheetLoading": {
+    "message": "Menyiapkan detail postingan..."
+  },
+  "missedPostsBadge": {
+    "message": "Jadwal terlewat: $COUNT$. Buka Antrean untuk mengirim atau menjadwalkan ulang.",
+    "placeholders": {
+      "count": { "content": "$1", "example": "2" }
+    }
+  },
+  "campaignStoppedBadge": {
+    "message": "Kampanye terakhir berhenti lebih awal. Buka RelayPost untuk melihat log grup."
+  }
+}

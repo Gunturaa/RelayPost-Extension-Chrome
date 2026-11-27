@@ -45,7 +45,8 @@
     "https://www.facebook.com/*",
     "https://*.facebook.com/*",
     "https://upload.facebook.com/*",
-    "https://rupload.facebook.com/*"
+    "https://rupload.facebook.com/*",
+    "https://relaypost-web.vercel.app/*"
   ],
   "declarative_net_request": {
     "rule_resources": [

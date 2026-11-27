@@ -186,7 +186,7 @@
         });
 
         const buyLink = document.createElement("a");
-        buyLink.href = cfg.checkoutUrl || "https://relaypost.example.com/upgrade";
+        buyLink.href = cfg.checkoutUrl || "https://relaypost-web.vercel.app/upgrade";
         buyLink.target = "_blank";
         buyLink.rel = "noopener";
         buyLink.className = "btn-outline btn-sm";

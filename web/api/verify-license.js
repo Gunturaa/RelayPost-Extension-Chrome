@@ -51,6 +51,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
+    const action = String(body.action || "verify").trim().toLowerCase();
     const licenseKey = String(body.licenseKey || "").trim().toUpperCase();
     const deviceId = String(body.deviceId || "").trim().slice(0, 120);
 
@@ -67,6 +68,21 @@ module.exports = async function handler(req, res) {
     }
 
     const lic = Array.isArray(lookup.data) ? lookup.data[0] : null;
+
+    // Optional action: release this device slot when user deactivates in the extension
+    if (action === "deactivate") {
+      if (lic && deviceId) {
+        await sbFetch(
+          `relaypost_license_devices?license_id=eq.${encodeURIComponent(lic.id)}&device_id=eq.${encodeURIComponent(deviceId)}`,
+          {
+            method: "DELETE",
+            headers: { Prefer: "return=minimal" }
+          }
+        );
+      }
+      return res.status(200).json({ ok: true, deactivated: true });
+    }
+
     if (!lic) {
       return res.status(404).json({ valid: false, error: "Kode lisensi tidak ditemukan." });
     }
