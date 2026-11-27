@@ -3,107 +3,131 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Upgrade ke RelayPost PRO</title>
+  <title>Paket PRO | RelayPost</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
+  <script defer src="/site.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
+  <a href="#main" class="skip-link">Lewati ke konten utama</a>
+
+  <header class="site-header">
+    <div class="header-inner">
       <a href="/" class="brand">
         <span class="brand-mark" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M21 3L3 10.2c-.8.3-.7 1.5.1 1.7l7.2 2.1 2.1 7.2c.2.8 1.4.9 1.7.1L21.7 3.8c.3-.7-.3-1.3-.7-.8z" fill="#FFFFFF"/>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M21 3L3 10.2c-.8.3-.7 1.5.1 1.7l7.2 2.1 2.1 7.2c.2.8 1.4.9 1.7.1L21.7 3.8c.3-.7-.3-1.3-.7-.8z" fill="currentColor"/>
           </svg>
         </span>
         <span>RelayPost</span>
       </a>
-      <nav class="nav-links" aria-label="Navigasi utama">
+
+      <div class="header-controls">
+        <nav class="nav-links" aria-label="Navigasi utama">
+          <a href="/">Beranda</a>
+          <a href="/upgrade" aria-current="page">Paket PRO</a>
+          <a href="/privacy">Privasi</a>
+        </nav>
+        <button id="themeToggle" type="button" class="theme-toggle" aria-pressed="false">Mode Gelap</button>
+        <button id="menuToggle" type="button" class="menu-toggle" aria-expanded="false" aria-controls="mobileDrawer">Menu</button>
+      </div>
+    </div>
+
+    <div id="mobileDrawer" class="mobile-drawer">
+      <nav aria-label="Navigasi seluler">
         <a href="/">Beranda</a>
-        <a href="/upgrade" class="is-active">Upgrade PRO</a>
+        <a href="/upgrade" aria-current="page">Paket PRO</a>
         <a href="/privacy">Privasi</a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <span class="kicker">Paket Fleksibel</span>
-      <h1>Pilih Paket RelayPost Anda</h1>
-      <p class="lead">
-        Mulai gratis untuk mencoba, lalu pilih paket PRO Bulanan atau Tahunan sesuai kebutuhan promosi Anda.
+  <main id="main" class="wrap">
+    <section class="page-head">
+      <h1>Paket RelayPost PRO</h1>
+      <p>
+        Semua fitur PRO sama di kedua paket. Anda tinggal memilih masa aktif bulanan untuk kebutuhan jangka pendek, atau tahunan jika rutin posting setiap hari.
       </p>
     </section>
 
-    <section class="grid-3" aria-label="Perbandingan paket">
-      <article class="card">
-        <h2>Gratis</h2>
-        <p>Untuk mencoba alur kirim ke beberapa grup.</p>
-        <div class="price-row">
-          <span class="price-val">Rp 0</span>
-          <span class="price-unit">/ selamanya</span>
-        </div>
-        <ul class="check-list">
-          <li><span class="check-dot">&#10003;</span><span>Maksimal 5 grup / kampanye</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Lampirkan 1 foto</span></li>
-          <li><span class="check-dot">&#10003;</span><span>1 jadwal aktif</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Preset jeda aman &amp; riwayat lokal</span></li>
-        </ul>
-      </article>
+    <section class="section-tight" aria-label="Pilihan paket PRO">
+      <div class="plans-grid">
+        <article class="plan-card">
+          <h2>PRO Bulanan</h2>
+          <p class="plan-desc">Cocok untuk kampanye musiman atau mencoba fitur penuh selama 30 hari.</p>
+          <div class="plan-price">
+            <span class="plan-amount">Rp 50.000</span>
+            <span class="plan-unit">/ 30 hari</span>
+          </div>
+          <ul class="plan-list">
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Kirim tanpa batas jumlah grup per kampanye</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Hingga 10 foto atau video, plus Set Foto Acak</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Spintax, Multi-Versi, dan Komentar Pertama</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Jadwal tanpa batas dan impor jadwal lewat CSV</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Cek Kesehatan Grup dan ekspor laporan CSV</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Aktif di hingga 2 perangkat Chrome</span></li>
+          </ul>
+          <a href="mailto:gunturtriatmaja04@gmail.com?subject=Order%20RelayPost%20PRO%20Bulanan%20(Rp%2050.000)&body=Halo%20Admin%20RelayPost%2C%0A%0ASaya%20ingin%20membeli%20lisensi%20RelayPost%20PRO%20Bulanan%20(Rp%2050.000).%0AEmail%20saya%3A%20%0AMetode%20pembayaran%20pilihan%3A%20QRIS%20%2F%20Transfer%20Bank%0A%0ATerima%20kasih." class="btn-secondary" style="width: 100%;">Pesan PRO Bulanan</a>
+        </article>
 
-      <article class="card">
-        <h2>PRO Bulanan</h2>
-        <p>Fleksibel bayar tiap bulan tanpa komitmen panjang.</p>
-        <div class="price-row">
-          <span class="price-val">Rp 50rb</span>
-          <span class="price-unit">/ bulan</span>
-        </div>
-        <ul class="check-list">
-          <li><span class="check-dot">&#10003;</span><span>Kirim tanpa batas jumlah grup</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Multi-foto / video &amp; Set Foto Acak</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Spintax, Multi-Versi &amp; Komentar Pertama</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Jadwal tak terbatas &amp; Impor CSV</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Cek Kesehatan Grup &amp; Ekspor CSV</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Aktif di hingga 2 perangkat Chrome</span></li>
-        </ul>
-        <div class="cta-row" style="justify-content: flex-start;">
-          <a href="mailto:gunturtriatmaja04@gmail.com?subject=Order%20RelayPost%20PRO%20Bulanan%20(Rp%2050.000)&body=Halo%20Admin%20RelayPost%2C%0A%0ASaya%20ingin%20membeli%20lisensi%20RelayPost%20PRO%20Bulanan%20(Rp%2050.000).%0AEmail%20saya%3A%20%0AMetode%20pembayaran%20pilihan%3A%20QRIS%20%2F%20Transfer%20Bank%0A%0ATerima%20kasih." class="btn-outline" style="width: 100%;">Pilih Bulanan (Rp 50.000)</a>
-        </div>
-      </article>
+        <article class="plan-card is-recommended">
+          <div class="plan-meta">Hemat Rp 100.000 dibanding bayar bulanan</div>
+          <h2>PRO Tahunan</h2>
+          <p class="plan-desc">Untuk admin komunitas dan penjual yang mengirim promosi rutin sepanjang tahun.</p>
+          <div class="plan-price">
+            <span class="plan-amount">Rp 500.000</span>
+            <span class="plan-unit">/ 365 hari</span>
+          </div>
+          <ul class="plan-list">
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Semua fitur PRO Bulanan tanpa batas</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Masa aktif penuh 365 hari (setara Rp 41.600 per bulan)</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Aktif di hingga 2 perangkat Chrome</span></li>
+            <li><span class="plan-mark" aria-hidden="true">&#10003;</span><span>Pembaruan fitur ekstensi selama masa aktif</span></li>
+          </ul>
+          <a href="mailto:gunturtriatmaja04@gmail.com?subject=Order%20RelayPost%20PRO%20Tahunan%20(Rp%20500.000)&body=Halo%20Admin%20RelayPost%2C%0A%0ASaya%20ingin%20membeli%20lisensi%20RelayPost%20PRO%20Tahunan%20(Rp%20500.000).%0AEmail%20saya%3A%20%0AMetode%20pembayaran%20pilihan%3A%20QRIS%20%2F%20Transfer%20Bank%0A%0ATerima%20kasih." class="btn-primary" style="width: 100%;">Pesan PRO Tahunan</a>
+        </article>
+      </div>
 
-      <article class="card is-featured">
-        <span class="kicker" style="margin-bottom: 8px;">Hemat 2 Bulan</span>
-        <h2>PRO Tahunan</h2>
-        <p>Lebih hemat Rp 100.000 dibanding bayar bulanan.</p>
-        <div class="price-row">
-          <span class="price-val">Rp 500rb</span>
-          <span class="price-unit">/ tahun</span>
-        </div>
-        <ul class="check-list">
-          <li><span class="check-dot">&#10003;</span><span>Semua fitur PRO Bulanan</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Masa aktif penuh 365 hari</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Setara Rp 41.600 / bulan</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Aktif di hingga 2 perangkat Chrome</span></li>
-          <li><span class="check-dot">&#10003;</span><span>Prioritas pembaruan fitur baru</span></li>
-        </ul>
-        <div class="cta-row" style="justify-content: flex-start;">
-          <a href="mailto:gunturtriatmaja04@gmail.com?subject=Order%20RelayPost%20PRO%20Tahunan%20(Rp%20500.000)&body=Halo%20Admin%20RelayPost%2C%0A%0ASaya%20ingin%20membeli%20lisensi%20RelayPost%20PRO%20Tahunan%20(Rp%20500.000).%0AEmail%20saya%3A%20%0AMetode%20pembayaran%20pilihan%3A%20QRIS%20%2F%20Transfer%20Bank%0A%0ATerima%20kasih." class="btn-primary" style="width: 100%;">Pilih Tahunan (Rp 500.000)</a>
-        </div>
-      </article>
+      <div class="free-footnote">
+        <p>
+          <strong>Versi Gratis tetap tersedia selamanya.</strong> Anda bisa langsung mencoba pengiriman hingga 5 grup per kampanye, 1 foto, dan 1 jadwal aktif tanpa kode lisensi.
+        </p>
+        <a href="/#perbandingan" class="btn-secondary">Lihat tabel perbandingan</a>
+      </div>
     </section>
 
-    <section class="card" id="cara-aktivasi">
-      <h2>Cara Pemesanan &amp; Aktivasi Kode Lisensi</h2>
-      <ol class="steps-list">
-        <li>Klik paket <strong>PRO Bulanan (Rp 50.000)</strong> atau <strong>PRO Tahunan (Rp 500.000)</strong>, atau kirim email langsung ke <a href="mailto:gunturtriatmaja04@gmail.com">gunturtriatmaja04@gmail.com</a> untuk konfirmasi pembayaran dan mendapatkan kode <code>RLY-PRO-XXXX-XXXX</code>.</li>
-        <li>Buka ekstensi <strong>RelayPost</strong> di Chrome, lalu klik tombol <strong>Free</strong> di pojok kanan atas.</li>
-        <li>Tempel kode lisensi Anda lalu klik <strong>Aktifkan Lisensi</strong>. Seluruh fitur PRO langsung terbuka sesuai masa aktif paket Anda.</li>
-      </ol>
+    <section class="section" id="cara-aktivasi" aria-labelledby="activation-title">
+      <div class="activation-grid">
+        <div>
+          <h2 id="activation-title">Cara pemesanan dan aktivasi kode</h2>
+          <p style="margin-top: 10px; color: var(--muted);">
+            Setelah pembayaran dikonfirmasi, kami mengirimkan kode berformat <code>RLY-PRO-XXXX-XXXX</code> ke email Anda.
+          </p>
+          <div style="margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px;">
+            <button type="button" class="btn-secondary" data-copy="gunturtriatmaja04@gmail.com" data-copy-label="Alamat email disalin">Salin email admin</button>
+          </div>
+        </div>
+
+        <ol class="activation-steps">
+          <li>Pilih paket <strong>PRO Bulanan</strong> atau <strong>PRO Tahunan</strong> di atas, atau kirim email ke <a href="mailto:gunturtriatmaja04@gmail.com">gunturtriatmaja04@gmail.com</a> dengan metode pembayaran pilihan (QRIS atau Transfer Bank).</li>
+          <li>Buka ekstensi <strong>RelayPost</strong> di Chrome, lalu klik tombol <strong>Free</strong> di pojok kanan atas.</li>
+          <li>Tempel kode <code>RLY-PRO-XXXX-XXXX</code> yang Anda terima lalu klik <strong>Aktifkan Lisensi</strong>. Fitur PRO langsung terbuka.</li>
+          <li>Jika berganti laptop atau browser, klik <strong>Nonaktifkan Lisensi</strong> di perangkat lama agar slot perangkat otomatis kosong kembali.</li>
+        </ol>
+      </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <span>RelayPost Chrome Extension</span>
-    <a href="/privacy">Kebijakan Privasi</a>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>RelayPost untuk Google Chrome</span>
+      <div class="footer-links">
+        <a href="/">Beranda</a>
+        <a href="/privacy">Kebijakan Privasi</a>
+      </div>
+    </div>
   </footer>
 </body>
 </html>

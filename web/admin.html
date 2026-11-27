@@ -4,33 +4,67 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Admin Panel — RelayPost</title>
+  <title>Admin Panel | RelayPost</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
+  <script defer src="/site.js"></script>
   <style>
-    :root {
-      --danger: #D92D20;
-      --danger-soft: #FEF3F2;
-      --warn: #B54708;
-      --warn-soft: #FFFAEB;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --danger: #FF6961;
-        --danger-soft: #3B1212;
-        --warn: #FFD60A;
-        --warn-soft: #332900;
-      }
-    }
-
-    .admin-container {
-      max-width: 1080px;
+    .admin-main {
+      max-width: var(--container);
       margin: 0 auto;
-      padding: 28px 20px 64px;
+      padding: 32px 24px 64px;
     }
 
-    .login-wrap {
-      max-width: 420px;
-      margin: 64px auto;
+    .login-box {
+      max-width: 440px;
+      margin: 56px auto;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-top: 3px solid var(--ink);
+      border-radius: var(--radius-md);
+      padding: 28px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border: 1px solid var(--rule);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      margin-bottom: 24px;
+    }
+
+    .summary-cell {
+      padding: 16px 20px;
+      border-right: 1px solid var(--rule);
+    }
+    .summary-cell:last-child {
+      border-right: none;
+    }
+
+    .summary-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .summary-val {
+      margin-top: 4px;
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      font-weight: 600;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
     }
 
     .field {
@@ -39,100 +73,83 @@
       gap: 6px;
       margin-bottom: 14px;
     }
+
     .field label {
-      font-size: 13px;
+      font-size: 0.86rem;
       font-weight: 600;
       color: var(--ink);
     }
-    .field input, .field select {
+
+    .field input,
+    .field select {
       width: 100%;
-      padding: 10px 13px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+      min-height: 44px;
+      padding: 9px 12px;
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-sm);
       background: var(--bg);
       color: var(--ink);
       font: inherit;
-      font-size: 14px;
-    }
-    .field input:focus, .field select:focus {
-      outline: 2px solid var(--brand);
-      outline-offset: 1px;
-    }
-    .field-hint {
-      font-size: 12px;
-      color: var(--muted);
+      font-size: 0.94rem;
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px 18px;
-      box-shadow: var(--shadow-card);
-    }
-    .stat-label {
-      font-size: 12.5px;
+    .field-hint {
+      font-size: 0.8rem;
       color: var(--muted);
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .stat-val {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px 16px;
+      gap: 12px 18px;
     }
 
-    .preset-row {
+    .preset-row,
+    .filter-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 14px;
     }
-    .chip-btn {
-      padding: 7px 13px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border);
+
+    .seg-btn {
+      min-height: 44px;
+      padding: 8px 14px;
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-sm);
       background: var(--bg);
       color: var(--ink);
       font: inherit;
-      font-size: 13px;
+      font-size: 0.86rem;
       font-weight: 600;
       transition: background 0.12s ease, border-color 0.12s ease;
     }
-    .chip-btn:hover { background: var(--surface-2); }
-    .chip-btn.is-active {
-      background: var(--brand);
-      color: var(--brand-ink);
-      border-color: var(--brand);
+
+    .seg-btn:hover {
+      background: var(--surface-alt);
+    }
+
+    .seg-btn.is-active {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
     }
 
     .created-banner {
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 14px;
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: var(--radius-sm);
       background: var(--ok-soft);
-      border: 1px solid rgba(27, 126, 54, 0.25);
+      border: 1px solid var(--ok);
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
+
     .created-key {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 16px;
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--ok);
       letter-spacing: 0.03em;
@@ -143,92 +160,86 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .search-input {
-      flex: 1 1 240px;
-      max-width: 360px;
-      padding: 9px 14px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--ink);
-      font: inherit;
-      font-size: 14px;
-    }
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
-    .table-wrap {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+    .search-input {
+      flex: 1 1 260px;
+      max-width: 380px;
+      min-height: 44px;
+      padding: 9px 12px;
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.92rem;
     }
-    table {
+
+    .admin-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13.5px;
+      font-size: 0.88rem;
     }
-    th {
+
+    .admin-table th {
       text-align: left;
       padding: 10px 12px;
-      font-size: 12px;
+      font-size: 0.78rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
       color: var(--muted);
-      border-bottom: 1px solid var(--border);
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--rule);
       white-space: nowrap;
     }
-    td {
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
+
+    .admin-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--rule);
       vertical-align: top;
     }
-    tr:last-child td { border-bottom: none; }
+
+    .admin-table tr:last-child td {
+      border-bottom: none;
+    }
 
     .mono-key {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-family: var(--font-mono);
       font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.02em;
+      font-size: 0.86rem;
       white-space: nowrap;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 9px;
-      border-radius: var(--radius-pill);
-      font-size: 11.5px;
+    .status-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 2px;
+      font-size: 0.76rem;
       font-weight: 700;
       white-space: nowrap;
     }
-    .badge-active { background: var(--ok-soft); color: var(--ok); }
-    .badge-expired { background: var(--warn-soft); color: var(--warn); }
-    .badge-revoked { background: var(--danger-soft); color: var(--danger); }
+    .status-active { background: var(--ok-soft); color: var(--ok); }
+    .status-expired { background: var(--warn-soft); color: var(--warn); }
+    .status-revoked { background: var(--danger-soft); color: var(--danger); }
 
-    .btn-sm {
-      padding: 5px 10px;
-      border-radius: 9px;
-      border: 1px solid var(--border);
+    .btn-act {
+      min-height: 36px;
+      padding: 6px 10px;
+      border: 1px solid var(--rule-strong);
+      border-radius: var(--radius-sm);
       background: var(--surface);
       color: var(--ink);
       font: inherit;
-      font-size: 12px;
+      font-size: 0.8rem;
       font-weight: 600;
       white-space: nowrap;
-      transition: background 0.12s ease;
     }
-    .btn-sm:hover { background: var(--surface-2); }
-    .btn-sm.is-danger { color: var(--danger); border-color: rgba(217, 45, 32, 0.28); }
-    .btn-sm.is-danger:hover { background: var(--danger-soft); }
-    .btn-sm.is-ok { color: var(--ok); border-color: rgba(27, 126, 54, 0.28); }
-    .btn-sm.is-ok:hover { background: var(--ok-soft); }
+    .btn-act:hover { background: var(--surface-alt); }
+    .btn-act.is-danger { color: var(--danger); border-color: var(--danger); }
+    .btn-act.is-danger:hover { background: var(--danger-soft); }
+    .btn-act.is-ok { color: var(--ok); border-color: var(--ok); }
+    .btn-act.is-ok:hover { background: var(--ok-soft); }
 
     .actions-cell {
       display: flex;
@@ -237,72 +248,94 @@
     }
 
     .alert-box {
-      padding: 11px 14px;
-      border-radius: 12px;
-      font-size: 13.5px;
-      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      margin-bottom: 16px;
       display: none;
     }
     .alert-box.is-visible { display: block; }
-    .alert-box.is-error { background: var(--danger-soft); color: var(--danger); }
-    .alert-box.is-info { background: var(--brand-soft); color: var(--brand); }
-
-    .toast {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 50;
-      background: var(--ink);
-      color: var(--surface);
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-size: 13.5px;
-      font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
-      opacity: 0;
-      transform: translateY(8px);
-      pointer-events: none;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-    }
-    .toast.is-visible {
-      opacity: 1;
-      transform: translateY(0);
+    .alert-box.is-error {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border: 1px solid var(--danger);
     }
 
-    .muted-small { font-size: 12px; color: var(--muted); }
+    .muted-small {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
     .hidden { display: none !important; }
 
-    @media (max-width: 760px) {
-      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .form-grid { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .summary-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .summary-cell {
+        border-bottom: 1px solid var(--rule);
+      }
+      .summary-cell:nth-child(2n) {
+        border-right: none;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .admin-main {
+        padding: 20px 16px 48px;
+      }
+      .panel {
+        padding: 18px 16px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn-act {
+        min-height: 44px;
+        padding: 8px 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner" style="max-width: 1080px;">
+  <a href="#main" class="skip-link">Lewati ke konten utama</a>
+
+  <header class="site-header">
+    <div class="header-inner">
       <a href="/" class="brand">
         <span class="brand-mark" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M21 3L3 10.2c-.8.3-.7 1.5.1 1.7l7.2 2.1 2.1 7.2c.2.8 1.4.9 1.7.1L21.7 3.8c.3-.7-.3-1.3-.7-.8z" fill="#FFFFFF"/>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M21 3L3 10.2c-.8.3-.7 1.5.1 1.7l7.2 2.1 2.1 7.2c.2.8 1.4.9 1.7.1L21.7 3.8c.3-.7-.3-1.3-.7-.8z" fill="currentColor"/>
           </svg>
         </span>
         <span>RelayPost Admin</span>
       </a>
-      <nav class="nav-links" aria-label="Navigasi admin">
+
+      <div class="header-controls">
+        <nav class="nav-links" aria-label="Navigasi admin">
+          <a href="/">Beranda</a>
+          <a href="/upgrade">Paket PRO</a>
+        </nav>
+        <button id="themeToggle" type="button" class="theme-toggle" aria-pressed="false">Mode Gelap</button>
+        <button id="logoutBtn" type="button" class="btn-secondary hidden">Keluar</button>
+        <button id="menuToggle" type="button" class="menu-toggle" aria-expanded="false" aria-controls="mobileDrawer">Menu</button>
+      </div>
+    </div>
+
+    <div id="mobileDrawer" class="mobile-drawer">
+      <nav aria-label="Navigasi seluler">
         <a href="/">Beranda</a>
-        <a href="/upgrade">Upgrade</a>
-        <button id="logoutBtn" type="button" class="btn-sm hidden">Keluar</button>
+        <a href="/upgrade">Paket PRO</a>
       </nav>
     </div>
   </header>
 
-  <main class="admin-container">
-    <!-- Login View -->
-    <section id="loginView" class="login-wrap card">
-      <span class="kicker" style="margin-bottom: 10px;">Akses Owner</span>
-      <h2 style="margin-bottom: 6px;">Masuk Admin Panel</h2>
-      <p style="margin-bottom: 18px;">Kelola lisensi RelayPost PRO, buat akses gratis untuk teman/tester, perpanjang masa aktif, atau reset perangkat.</p>
+  <main id="main" class="admin-main">
+    <section id="loginView" class="login-box" aria-labelledby="login-title">
+      <h1 id="login-title" style="font-size: 1.85rem;">Masuk Admin Panel</h1>
+      <p style="margin: 8px 0 20px; color: var(--muted);">
+        Kelola kode lisensi RelayPost PRO, berikan akses gratis ke teman atau penguji, perpanjang masa aktif, dan reset perangkat.
+      </p>
       <div id="loginError" class="alert-box is-error" role="alert"></div>
       <form id="loginForm">
         <div class="field">
@@ -313,64 +346,64 @@
       </form>
     </section>
 
-    <!-- Dashboard View -->
-    <section id="dashboardView" class="hidden">
+    <section id="dashboardView" class="hidden" aria-label="Manajemen lisensi">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.3rem);">Daftar dan Generator Lisensi</h2>
+        <p style="margin-top: 4px; color: var(--muted);">Data dibaca langsung dari tabel Supabase <code>relaypost_licenses</code>.</p>
+      </div>
+
       <div id="globalAlert" class="alert-box is-error" role="alert"></div>
 
-      <!-- Stats -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Total Lisensi</div>
-          <div class="stat-val" id="statTotal">0</div>
+      <div class="summary-strip" aria-label="Ringkasan data lisensi">
+        <div class="summary-cell">
+          <div class="summary-label">Total Lisensi</div>
+          <div class="summary-val" id="statTotal">0</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">PRO Aktif</div>
-          <div class="stat-val" id="statActive" style="color: var(--ok);">0</div>
+        <div class="summary-cell">
+          <div class="summary-label">PRO Aktif</div>
+          <div class="summary-val" id="statActive" style="color: var(--ok);">0</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Expired / Revoked</div>
-          <div class="stat-val" id="statInactive">0</div>
+        <div class="summary-cell">
+          <div class="summary-label">Expired / Revoked</div>
+          <div class="summary-val" id="statInactive">0</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Perangkat Terdaftar</div>
-          <div class="stat-val" id="statDevices">0</div>
+        <div class="summary-cell">
+          <div class="summary-label">Perangkat Terdaftar</div>
+          <div class="summary-val" id="statDevices">0</div>
         </div>
       </div>
 
-      <!-- Create / Grant Free Pro Card -->
-      <article class="card" style="margin-bottom: 20px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;">
-          <div>
-            <h2 style="margin-bottom: 2px;">Buat / Beri Akses PRO</h2>
-            <p style="margin: 0;">Generate kode lisensi baru untuk pembeli atau kasih akses PRO gratis.</p>
-          </div>
-        </div>
+      <article class="panel">
+        <h3>Buat atau Beri Akses PRO</h3>
+        <p style="margin: 4px 0 18px; color: var(--muted);">
+          Buat kode baru untuk pembeli, uji coba 7 hari, atau akses gratis selamanya.
+        </p>
 
-        <div class="field" style="margin-bottom: 10px;">
-          <label>Durasi Akses</label>
-          <div class="preset-row" id="durationPresets">
-            <button type="button" class="chip-btn" data-days="7">7 Hari (Trial)</button>
-            <button type="button" class="chip-btn is-active" data-days="30">30 Hari (Bulanan)</button>
-            <button type="button" class="chip-btn" data-days="365">1 Tahun</button>
-            <button type="button" class="chip-btn" data-days="lifetime">Lifetime (Gratis Selamanya)</button>
-            <button type="button" class="chip-btn" data-days="custom">Custom Tanggal</button>
+        <div class="field" style="margin-bottom: 16px;">
+          <span style="font-size: 0.86rem; font-weight: 600;">Durasi Akses</span>
+          <div class="preset-row" id="durationPresets" role="group" aria-label="Pilihan durasi lisensi">
+            <button type="button" class="seg-btn" data-days="7">7 Hari (Trial)</button>
+            <button type="button" class="seg-btn is-active" data-days="30">30 Hari (Bulanan)</button>
+            <button type="button" class="seg-btn" data-days="365">1 Tahun</button>
+            <button type="button" class="seg-btn" data-days="lifetime">Lifetime (Gratis Selamanya)</button>
+            <button type="button" class="seg-btn" data-days="custom">Custom Tanggal</button>
           </div>
         </div>
 
         <form id="createForm">
           <div class="form-grid">
             <div class="field">
-              <label for="customerEmail">Penerima (Nama / Email)</label>
-              <input id="customerEmail" type="text" placeholder="misal: budi@gmail.com atau Budi (Teman)" />
+              <label for="customerEmail">Penerima (Nama atau Email)</label>
+              <input id="customerEmail" type="text" placeholder="email@contoh.com atau Nama Penerima" />
             </div>
             <div class="field">
               <label for="licenseNote">Catatan (Opsional)</label>
-              <input id="licenseNote" type="text" placeholder="misal: Free Pro dari Owner / Order WA QRIS" />
+              <input id="licenseNote" type="text" placeholder="Contoh: Akses gratis teman / Order QRIS" />
             </div>
             <div class="field">
               <label for="customKey">Kode Lisensi (Opsional)</label>
-              <input id="customKey" type="text" placeholder="Kosongkan untuk auto-generate RLY-PRO-XXXX-XXXX" />
-              <span class="field-hint">Bisa isi custom, misal: <code>RLY-PRO-BUDI</code></span>
+              <input id="customKey" type="text" placeholder="Kosongkan untuk acak otomatis RLY-PRO-XXXX-XXXX" />
+              <span class="field-hint">Format bebas minimal 6 karakter, misalnya <code>RLY-PRO-NAMA</code>.</span>
             </div>
             <div class="field">
               <label for="maxDevices">Maksimal Perangkat</label>
@@ -382,51 +415,51 @@
             </div>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px;">
-            <button id="createSubmitBtn" type="submit" class="btn-primary">Generate Kode PRO</button>
-            <span id="noteWarning" class="muted-small hidden">Catatan belum tersimpan ke DB — jalankan <code>supabase-schema.sql</code> untuk menambah kolom <code>note</code>.</span>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 6px;">
+            <button id="createSubmitBtn" type="submit" class="btn-primary">Buat Kode PRO</button>
+            <span id="noteWarning" class="muted-small hidden">Kolom <code>note</code> belum ada di database. Jalankan <code>web/supabase-schema.sql</code> agar catatan ikut tersimpan.</span>
           </div>
         </form>
 
-        <div id="createdBanner" class="created-banner hidden">
+        <div id="createdBanner" class="created-banner hidden" aria-live="polite">
           <div>
-            <div class="muted-small" style="color: var(--ok); font-weight: 600;">Lisensi PRO berhasil dibuat:</div>
+            <div class="muted-small" style="color: var(--ok); font-weight: 700;">Lisensi PRO berhasil dibuat</div>
             <div class="created-key" id="createdKeyText"></div>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button id="copyCreatedKeyBtn" type="button" class="btn-sm is-ok">Salin Kode</button>
-            <button id="copyInviteBtn" type="button" class="btn-sm">Salin Pesan WA / Chat</button>
+            <button id="copyCreatedKeyBtn" type="button" class="btn-act is-ok">Salin Kode</button>
+            <button id="copyInviteBtn" type="button" class="btn-act">Salin Pesan Aktivasi</button>
           </div>
         </div>
       </article>
 
-      <!-- License List Card -->
-      <article class="card">
+      <article class="panel">
         <div class="toolbar">
+          <label for="searchInput" class="sr-only">Cari lisensi</label>
           <input id="searchInput" type="search" class="search-input" placeholder="Cari kode, nama/email, atau catatan..." />
-          <div class="filter-row">
-            <button type="button" class="chip-btn is-active" data-filter="all">Semua</button>
-            <button type="button" class="chip-btn" data-filter="active">Aktif</button>
-            <button type="button" class="chip-btn" data-filter="expired">Expired</button>
-            <button type="button" class="chip-btn" data-filter="revoked">Revoked</button>
-            <button id="refreshBtn" type="button" class="btn-sm">Refresh</button>
+          <div class="filter-row" role="group" aria-label="Filter status lisensi">
+            <button type="button" class="seg-btn is-active" data-filter="all">Semua</button>
+            <button type="button" class="seg-btn" data-filter="active">Aktif</button>
+            <button type="button" class="seg-btn" data-filter="expired">Expired</button>
+            <button type="button" class="seg-btn" data-filter="revoked">Revoked</button>
+            <button id="refreshBtn" type="button" class="seg-btn">Muat Ulang</button>
           </div>
         </div>
 
-        <div class="table-wrap">
-          <table>
+        <div class="table-scroll">
+          <table class="admin-table">
             <thead>
               <tr>
-                <th>Kode Lisensi</th>
-                <th>Status</th>
-                <th>Penerima &amp; Catatan</th>
-                <th>Masa Aktif</th>
-                <th>Perangkat</th>
-                <th>Aksi</th>
+                <th scope="col">Kode Lisensi</th>
+                <th scope="col">Status</th>
+                <th scope="col">Penerima &amp; Catatan</th>
+                <th scope="col">Masa Aktif</th>
+                <th scope="col">Perangkat</th>
+                <th scope="col">Aksi</th>
               </tr>
             </thead>
             <tbody id="licenseTableBody">
-              <tr><td colspan="6" class="muted-small">Memuat data lisensi...</td></tr>
+              <tr><td colspan="6" class="muted-small">Memuat daftar lisensi dari Supabase...</td></tr>
             </tbody>
           </table>
         </div>
@@ -506,7 +539,7 @@
       }
 
       function formatRemaining(iso) {
-        if (!iso) return "Selamanya";
+        if (!iso) return "Aktif selamanya";
         const diffMs = Date.parse(iso) - Date.now();
         const days = Math.ceil(diffMs / (24 * 60 * 60 * 1000));
         if (days < 0) return `Lewat ${Math.abs(days)} hari`;
@@ -562,17 +595,24 @@
           return hay.includes(q);
         });
 
+        if (allLicenses.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="6" class="muted-small">Belum ada lisensi di database. Gunakan form "Buat atau Beri Akses PRO" di atas untuk membuat kode pertama.</td></tr>';
+          return;
+        }
+
         if (filtered.length === 0) {
-          tableBody.innerHTML = '<tr><td colspan="6" class="muted-small">Belum ada lisensi yang cocok.</td></tr>';
+          tableBody.innerHTML =
+            '<tr><td colspan="6" class="muted-small">Tidak ada lisensi yang cocok dengan kata kunci atau filter aktif. Coba hapus kata pencarian atau pilih filter Semua.</td></tr>';
           return;
         }
 
         tableBody.innerHTML = filtered
           .map((lic) => {
             const state = getLicenseState(lic);
-            const badgeClass =
-              state === "active" ? "badge-active" : state === "expired" ? "badge-expired" : "badge-revoked";
-            const badgeLabel =
+            const tagClass =
+              state === "active" ? "status-active" : state === "expired" ? "status-expired" : "status-revoked";
+            const tagLabel =
               state === "active" ? "Aktif" : state === "expired" ? "Expired" : "Revoked";
             const toggleLabel = lic.status === "active" ? "Revoke" : "Aktifkan";
             const toggleClass = lic.status === "active" ? "is-danger" : "is-ok";
@@ -583,11 +623,11 @@
               <tr data-id="${escapeHtml(lic.id)}">
                 <td>
                   <div class="mono-key">${escapeHtml(lic.license_key)}</div>
-                  <div style="margin-top: 6px;">
-                    <button type="button" class="btn-sm" data-action="copy" data-key="${escapeHtml(lic.license_key)}">Salin</button>
+                  <div style="margin-top: 8px;">
+                    <button type="button" class="btn-act" data-action="copy" data-key="${escapeHtml(lic.license_key)}">Salin</button>
                   </div>
                 </td>
-                <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+                <td><span class="status-tag ${tagClass}">${tagLabel}</span></td>
                 <td>
                   <div style="font-weight: 600;">${escapeHtml(lic.customer_email || "-")}</div>
                   ${lic.note ? `<div class="muted-small" style="margin-top: 2px;">${escapeHtml(lic.note)}</div>` : ""}
@@ -599,15 +639,15 @@
                 </td>
                 <td>
                   <div style="font-weight: 600;">${devsUsed} / ${maxDevs}</div>
-                  ${devsUsed > 0 ? `<button type="button" class="btn-sm" style="margin-top: 6px;" data-action="reset_devices">Reset Device</button>` : '<span class="muted-small">Belum dipakai</span>'}
+                  ${devsUsed > 0 ? `<button type="button" class="btn-act" style="margin-top: 8px;" data-action="reset_devices">Reset Device</button>` : '<span class="muted-small">Belum dipakai</span>'}
                 </td>
                 <td>
                   <div class="actions-cell">
-                    <button type="button" class="btn-sm" data-action="extend_30">+30 Hr</button>
-                    <button type="button" class="btn-sm" data-action="extend_365">+1 Thn</button>
-                    ${lic.expires_at ? `<button type="button" class="btn-sm" data-action="make_lifetime">Lifetime</button>` : ""}
-                    <button type="button" class="btn-sm ${toggleClass}" data-action="toggle_status" data-next="${lic.status === "active" ? "revoked" : "active"}">${toggleLabel}</button>
-                    <button type="button" class="btn-sm is-danger" data-action="delete">Hapus</button>
+                    <button type="button" class="btn-act" data-action="extend_30">+30 Hr</button>
+                    <button type="button" class="btn-act" data-action="extend_365">+1 Thn</button>
+                    ${lic.expires_at ? `<button type="button" class="btn-act" data-action="make_lifetime">Lifetime</button>` : ""}
+                    <button type="button" class="btn-act ${toggleClass}" data-action="toggle_status" data-next="${lic.status === "active" ? "revoked" : "active"}">${toggleLabel}</button>
+                    <button type="button" class="btn-act is-danger" data-action="delete">Hapus</button>
                   </div>
                 </td>
               </tr>
@@ -618,6 +658,7 @@
 
       async function loadLicenses() {
         showError(globalAlert, "");
+        tableBody.innerHTML = '<tr><td colspan="6" class="muted-small">Memuat daftar lisensi dari Supabase...</td></tr>';
         const data = await apiFetch("GET");
         allLicenses = Array.isArray(data.licenses) ? data.licenses : [];
         $("noteWarning").classList.toggle("hidden", data.supportsNote !== false);
@@ -641,7 +682,6 @@
         $("adminPasswordInput").focus();
       }
 
-      // Login handler
       $("loginForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         showError(loginError, "");
@@ -650,7 +690,7 @@
 
         const btn = $("loginSubmitBtn");
         btn.disabled = true;
-        btn.textContent = "Memeriksa...";
+        btn.textContent = "Memeriksa password...";
         adminPassword = pw;
 
         try {
@@ -659,7 +699,7 @@
           enterDashboard();
         } catch (err) {
           adminPassword = "";
-          showError(loginError, err.message || "Gagal masuk.");
+          showError(loginError, err.message || "Gagal masuk. Periksa kembali ADMIN_PASSWORD.");
         } finally {
           btn.disabled = false;
           btn.textContent = "Masuk";
@@ -668,7 +708,6 @@
 
       logoutBtn.addEventListener("click", exitDashboard);
 
-      // Duration preset buttons
       $("durationPresets").addEventListener("click", (e) => {
         const btn = e.target.closest("button[data-days]");
         if (!btn) return;
@@ -679,13 +718,12 @@
         $("customDateWrap").classList.toggle("hidden", selectedDuration !== "custom");
       });
 
-      // Create license form
       $("createForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         showError(globalAlert, "");
         const btn = $("createSubmitBtn");
         btn.disabled = true;
-        btn.textContent = "Membuat...";
+        btn.textContent = "Membuat kode...";
 
         try {
           const payload = {
@@ -716,19 +754,19 @@
           $("licenseNote").value = "";
           $("customKey").value = "";
 
-          showToast("Kode PRO berhasil dibuat!");
+          showToast("Kode PRO berhasil dibuat");
           await loadLicenses();
         } catch (err) {
-          showError(globalAlert, err.message || "Gagal membuat lisensi.");
+          showError(globalAlert, err.message || "Gagal membuat lisensi. Periksa koneksi atau coba lagi.");
         } finally {
           btn.disabled = false;
-          btn.textContent = "Generate Kode PRO";
+          btn.textContent = "Buat Kode PRO";
         }
       });
 
       $("copyCreatedKeyBtn").addEventListener("click", () => {
         if (!lastCreatedLicense) return;
-        copyText(lastCreatedLicense.license_key, "Kode lisensi disalin!");
+        copyText(lastCreatedLicense.license_key, "Kode lisensi disalin");
       });
 
       $("copyInviteBtn").addEventListener("click", () => {
@@ -743,10 +781,9 @@
           `1. Buka ekstensi RelayPost di Chrome\n` +
           `2. Klik tombol "Free" di pojok kanan atas\n` +
           `3. Tempel kode di atas lalu klik "Aktifkan Lisensi"`;
-        copyText(msg, "Pesan aktivasi disalin!");
+        copyText(msg, "Pesan aktivasi disalin");
       });
 
-      // Filter & search
       $("searchInput").addEventListener("input", renderTable);
       document.querySelectorAll("button[data-filter]").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -761,13 +798,12 @@
       $("refreshBtn").addEventListener("click", async () => {
         try {
           await loadLicenses();
-          showToast("Data diperbarui");
+          showToast("Daftar lisensi diperbarui");
         } catch (err) {
-          showError(globalAlert, err.message);
+          showError(globalAlert, err.message || "Gagal memuat ulang daftar lisensi.");
         }
       });
 
-      // Row actions
       tableBody.addEventListener("click", async (e) => {
         const btn = e.target.closest("button[data-action]");
         if (!btn) return;
@@ -778,7 +814,7 @@
         const action = btn.dataset.action;
 
         if (action === "copy") {
-          copyText(btn.dataset.key, "Kode lisensi disalin!");
+          copyText(btn.dataset.key, "Kode lisensi disalin");
           return;
         }
 
@@ -786,10 +822,10 @@
         try {
           if (action === "extend_30") {
             await apiFetch("PATCH", { id, extendDays: 30 });
-            showToast("Masa aktif ditambah +30 hari");
+            showToast("Masa aktif ditambah 30 hari");
           } else if (action === "extend_365") {
             await apiFetch("PATCH", { id, extendDays: 365 });
-            showToast("Masa aktif ditambah +1 tahun");
+            showToast("Masa aktif ditambah 1 tahun");
           } else if (action === "make_lifetime") {
             if (!confirm("Ubah lisensi ini menjadi Lifetime (tanpa batas waktu)?")) return;
             await apiFetch("PATCH", { id, expiresAt: null, status: "active" });
@@ -813,7 +849,6 @@
         }
       });
 
-      // Auto-login if session password already stored
       if (adminPassword) {
         loadLicenses()
           .then(enterDashboard)
