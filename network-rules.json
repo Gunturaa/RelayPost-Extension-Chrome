@@ -29,11 +29,16 @@
           "header": "origin",
           "operation": "set",
           "value": "https://www.facebook.com"
+        },
+        {
+          "header": "referer",
+          "operation": "set",
+          "value": "https://www.facebook.com/"
         }
       ]
     },
     "condition": {
-      "urlFilter": "||upload.fa cebook.com/",
+      "urlFilter": "||upload.facebook.com/",
       "resourceTypes": ["xmlhttprequest"],
       "requestMethods": ["post"],
       "excludedInitiatorDomains": ["facebook.com"]

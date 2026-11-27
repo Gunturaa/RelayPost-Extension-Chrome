@@ -228,12 +228,15 @@
   }
 
   async function uploadPhoto(blob, tokens) {
+    const mime = String(blob?.type || "image/jpeg").toLowerCase();
+    const ext = mime.includes("png") ? "png" : mime.includes("webp") ? "webp" : mime.includes("gif") ? "gif" : "jpg";
     const form = new FormData();
     form.append("source", "8");
     form.append("profile_id", tokens.actorId);
     form.append("waterfallxapp", "comet");
     form.append("upload_id", `upload_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`);
-    form.append("farr", blob, "photo.jpg");
+    if (tokens.dtsg) form.append("fb_dtsg", tokens.dtsg);
+    form.append("farr", blob, `photo.${ext}`);
 
     const res = await fetch(`https://upload.facebook.com/ajax/react_composer/attachments/photo/upload?${buildBaseParams(tokens)}`, {
       method: "POST",
@@ -242,8 +245,17 @@
     });
     if (!res.ok) throw new Error(`Photo upload HTTP ${res.status}`);
     const text = await res.text();
-    const fbid = text.match(/"fbid"\s*:\s*"(\d+)"/)?.[1] || text.match(/"photoID"\s*:\s*"(\d+)"/)?.[1];
-    if (!fbid) throw new Error("Facebook did not return a photo ID.");
+    const fbid =
+      text.match(/"fbid"\s*:\s*"?(\d+)"?/)?.[1] ||
+      text.match(/"photoID"\s*:\s*"?(\d+)"?/)?.[1] ||
+      text.match(/"photo_id"\s*:\s*"?(\d+)"?/)?.[1] ||
+      text.match(/"media_id"\s*:\s*"?(\d+)"?/)?.[1];
+    if (!fbid) {
+      const fbErr =
+        text.match(/"errorDescription"\s*:\s*"([^"]+)"/)?.[1] ||
+        text.match(/"errorSummary"\s*:\s*"([^"]+)"/)?.[1];
+      throw new Error(fbErr ? `Photo upload rejected: ${fbErr}` : "Facebook did not return a photo ID.");
+    }
     return { photo: { id: String(fbid) } };
   }
 

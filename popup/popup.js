@@ -819,6 +819,31 @@
     const noHelper = document.getElementById("noGroupsHelper");
     if (noHelper) noHelper.hidden = count > 0;
 
+    // Quick-select bar for saved group collections directly in Step 1
+    const quickWrap = document.getElementById("savedListsQuickWrap");
+    if (quickWrap) {
+      quickWrap.innerHTML = "";
+      if (state.groupLists.length) {
+        quickWrap.hidden = false;
+        state.groupLists.slice(0, 6).forEach((list) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn-mini";
+          btn.textContent = `${list.name} (${list.groups.length})`;
+          btn.title = txt(`Pilih kelompok "${list.name}"`, `Load collection "${list.name}"`);
+          btn.addEventListener("click", () => {
+            state.selectedGroups = list.groups.slice();
+            saveDraft();
+            renderGroupSummary();
+            toast(txt(`Kelompok "${list.name}" dipilih (${list.groups.length} grup).`, `Loaded "${list.name}" (${list.groups.length} groups).`));
+          });
+          quickWrap.appendChild(btn);
+        });
+      } else {
+        quickWrap.hidden = true;
+      }
+    }
+
     const chips = document.getElementById("selectedChipsWrap");
     chips.innerHTML = "";
     if (!count) {
@@ -1413,10 +1438,14 @@
           toast(txt("Centang minimal 1 grup dulu.", "Select at least one group first."));
           return;
         }
-        const name = txt(`Daftar ${state.groupLists.length + 1} (${chosen.length})`, `List ${state.groupLists.length + 1} (${chosen.length})`);
+        const defaultName = txt(`Kelompok ${state.groupLists.length + 1}`, `Collection ${state.groupLists.length + 1}`);
+        const inputName = window.prompt(txt("Beri nama kelompok grup ini:", "Name this group collection:"), defaultName);
+        if (inputName === null) return;
+        const name = inputName.trim() || defaultName;
         state.groupLists.unshift({ id: `list_${Date.now()}`, name, groups: chosen });
         await chrome.storage.local.set({ relayGroupLists: state.groupLists });
-        toast(txt(`Tersimpan "${name}"`, `Saved "${name}"`));
+        renderGroupSummary();
+        toast(txt(`Tersimpan "${name}" (${chosen.length} grup)`, `Saved "${name}" (${chosen.length} groups)`));
       });
 
       const confirmBtn = document.createElement("button");
@@ -1438,6 +1467,12 @@
 
   function openManualImportModal() {
     openModal(txt("Tempel Link Grup atau CSV", "Add Group URLs or CSV"), (body) => {
+      const nameF = document.createElement("div");
+      nameF.className = "field";
+      nameF.innerHTML = `<label for="manualListName">${escapeHtml(txt("Nama Kelompok Grup (otomatis terisi dari nama file CSV)", "Group Collection Name (auto-filled from CSV filename)"))}</label>
+        <input id="manualListName" class="input" type="text" placeholder="${escapeHtml(txt("Contoh: Grup Jual Beli Jakarta", "e.g. Jakarta Marketplace Groups"))}" />`;
+      body.appendChild(nameF);
+
       const f = document.createElement("div");
       f.className = "field";
       f.innerHTML = `<label for="manualUrls">${escapeHtml(txt("Tempel link grup Facebook (satu baris satu link)", "Paste Facebook group URLs (one per line)"))}</label>
@@ -1453,6 +1488,14 @@
         </div>
         <p class="helper-note">${escapeHtml(txt("Format CSV: 1 kolom berisi Group URL (satu link per baris).", "CSV format: 1 column with Group URL (one link per row)."))}</p>`;
       body.appendChild(fileF);
+
+      const optF = document.createElement("div");
+      optF.className = "field";
+      optF.innerHTML = `<label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;">
+          <input id="manualAutoSelect" type="checkbox" checked />
+          <span>${escapeHtml(txt("Langsung pilih semua grup ini & simpan jadi Kelompok Grup", "Auto-select all imported groups & save as a Collection"))}</span>
+        </label>`;
+      body.appendChild(optF);
 
       fileF.querySelector("#downloadSampleCsvBtn").addEventListener("click", () => {
         const csvSample = [
@@ -1477,6 +1520,10 @@
       fileF.querySelector("#csvImport").addEventListener("change", async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        const nameInput = nameF.querySelector("#manualListName");
+        if (nameInput && !nameInput.value.trim()) {
+          nameInput.value = file.name.replace(/\.(csv|txt)$/i, "").replace(/[_-]+/g, " ").trim();
+        }
         const text = await file.text();
         const ta = f.querySelector("textarea");
         ta.value = (ta.value ? ta.value + "\n" : "") + text.replace(/^\uFEFF/, "");
@@ -1485,26 +1532,60 @@
       const addBtn = document.createElement("button");
       addBtn.type = "button";
       addBtn.className = "btn-primary btn-sm";
-      addBtn.textContent = txt("Tambahkan Grup", "Add Groups");
+      addBtn.textContent = txt("Tambahkan & Pilih Grup", "Import & Select Groups");
       addBtn.addEventListener("click", async () => {
         const rawLines = f.querySelector("textarea").value.split(/[\r\n]+/).map((s) => s.trim()).filter(Boolean);
-        const added = [];
+        const importedMap = new Map();
+        let newlyAdded = 0;
+
         for (const rawLine of rawLines) {
           const cells = rawLine.split(/[,;\t]+/).map((c) => c.trim().replace(/^["']|["']$/g, "")).filter(Boolean);
           for (let ci = 0; ci < cells.length; ci++) {
             const m = cells[ci].match(/facebook\.com\/groups\/([^/?#\s"']+)/i);
             if (!m) continue;
             const url = `https://www.facebook.com/groups/${m[1]}/`;
-            if (!state.joinedGroups.some((g) => g.url === url)) {
+            let existing = state.joinedGroups.find((g) => g.url === url);
+            if (!existing) {
               const maybeName = cells.find((c, idx) => idx !== ci && !/facebook\.com\/groups\//i.test(c) && !/^(nama|name|nama_grup|group_name)$/i.test(c));
-              const gObj = { id: m[1], name: maybeName || `Group ${m[1]}`, url };
-              state.joinedGroups.push(gObj);
-              added.push(gObj);
+              existing = { id: m[1], name: maybeName || `Group ${m[1]}`, url };
+              state.joinedGroups.push(existing);
+              newlyAdded += 1;
             }
+            importedMap.set(url, existing);
           }
         }
+
+        const importedGroups = Array.from(importedMap.values());
+        if (!importedGroups.length) {
+          toast(txt("Tidak ada link grup Facebook yang valid.", "No valid Facebook group URLs found."));
+          return;
+        }
+
         await chrome.storage.local.set({ joinedFacebookGroups: state.joinedGroups });
-        toast(txt(`${added.length} grup baru ditambahkan.`, `Added ${added.length} new group(s).`));
+
+        const autoSelect = optF.querySelector("#manualAutoSelect")?.checked !== false;
+        if (autoSelect) {
+          const customName = nameF.querySelector("#manualListName")?.value.trim();
+          const listName = customName || txt(`Import ${state.groupLists.length + 1}`, `Import ${state.groupLists.length + 1}`);
+          state.groupLists.unshift({
+            id: `list_${Date.now()}`,
+            name: listName,
+            groups: importedGroups.slice()
+          });
+          await chrome.storage.local.set({ relayGroupLists: state.groupLists });
+
+          state.selectedGroups = importedGroups.slice();
+          saveDraft();
+          renderGroupSummary();
+          closeModal();
+          toast(txt(
+            `${importedGroups.length} grup dipilih & disimpan sebagai kelompok "${listName}".`,
+            `${importedGroups.length} group(s) selected & saved as "${listName}".`
+          ));
+          return;
+        }
+
+        toast(txt(`${newlyAdded} grup baru ditambahkan.`, `Added ${newlyAdded} new group(s).`));
         openGroupsModal();
       });
       body.appendChild(addBtn);
@@ -1512,11 +1593,11 @@
   }
 
   function openListsModal() {
-    openModal(txt("Daftar Grup Tersimpan", "Saved Group Lists"), (body) => {
+    openModal(txt("Kelompok Grup Tersimpan", "Saved Group Collections"), (body) => {
       if (!state.groupLists.length) {
         body.innerHTML = `<p class="muted-text">${escapeHtml(txt(
-          "Belum ada daftar tersimpan. Buka 'Pilih Grup Tujuan', centang grup, lalu klik 'Simpan jadi Daftar'.",
-          "No saved lists yet. Select groups in 'Choose Target Groups' and click 'Save as List'."
+          "Belum ada kelompok tersimpan. Unggah CSV atau centang grup di 'Pilih Grup Tujuan' lalu simpan jadi kelompok.",
+          "No saved collections yet. Import a CSV or select groups in 'Choose Target Groups' and save as a list."
         ))}</p>`;
         return;
       }
@@ -1538,6 +1619,33 @@
           closeModal();
         });
 
+        const mergeBtn = document.createElement("button");
+        mergeBtn.type = "button";
+        mergeBtn.className = "btn-mini";
+        mergeBtn.textContent = txt("+ Gabung", "+ Merge");
+        mergeBtn.addEventListener("click", () => {
+          const map = new Map(state.selectedGroups.map((g) => [g.url, g]));
+          for (const g of list.groups) map.set(g.url, g);
+          state.selectedGroups = Array.from(map.values());
+          saveDraft();
+          renderGroupSummary();
+          closeModal();
+          toast(txt(`Kelompok "${list.name}" digabungkan (total ${state.selectedGroups.length} grup).`, `Merged "${list.name}" (${state.selectedGroups.length} groups total).`));
+        });
+
+        const renameBtn = document.createElement("button");
+        renameBtn.type = "button";
+        renameBtn.className = "btn-mini";
+        renameBtn.textContent = txt("Nama", "Rename");
+        renameBtn.addEventListener("click", async () => {
+          const next = window.prompt(txt("Ubah nama kelompok:", "Rename collection:"), list.name);
+          if (!next || !next.trim()) return;
+          list.name = next.trim();
+          await chrome.storage.local.set({ relayGroupLists: state.groupLists });
+          renderGroupSummary();
+          openListsModal();
+        });
+
         const splitBtn = document.createElement("button");
         splitBtn.type = "button";
         splitBtn.className = "btn-mini";
@@ -1551,10 +1659,11 @@
         delBtn.addEventListener("click", async () => {
           state.groupLists = state.groupLists.filter((l) => l.id !== list.id);
           await chrome.storage.local.set({ relayGroupLists: state.groupLists });
+          renderGroupSummary();
           openListsModal();
         });
 
-        btns.append(useBtn, splitBtn, delBtn);
+        btns.append(useBtn, mergeBtn, renameBtn, splitBtn, delBtn);
         row.appendChild(btns);
         body.appendChild(row);
       }
